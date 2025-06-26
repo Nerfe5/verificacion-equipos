@@ -7,24 +7,486 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Registro de Equipos Médicos</h1>
+  <h1>Sistema de Gestión de Equipos Médicos</h1>
+
+  <!-- Dashboard/Panel de Control -->
+  <div id="dashboard" class="dashboard">
+    <h2>Dashboard - Vista General</h2>
+    
+    <!-- Estadísticas Principales -->
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-icon">📋</div>
+        <div class="stat-content">
+          <div class="stat-number" id="total-equipos">0</div>
+          <div class="stat-label">Total de Equipos</div>
+        </div>
+      </div>
+      
+      <div class="stat-card operativo">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+          <div class="stat-number" id="equipos-operativos">0</div>
+          <div class="stat-label">Operativos</div>
+        </div>
+      </div>
+      
+      <div class="stat-card mantenimiento">
+        <div class="stat-icon">🔧</div>
+        <div class="stat-content">
+          <div class="stat-number" id="equipos-mantenimiento">0</div>
+          <div class="stat-label">En Mantenimiento</div>
+        </div>
+      </div>
+      
+      <div class="stat-card fuera-servicio">
+        <div class="stat-icon">❌</div>
+        <div class="stat-content">
+          <div class="stat-number" id="equipos-fuera-servicio">0</div>
+          <div class="stat-label">Fuera de Servicio</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alertas y Notificaciones -->
+    <div class="alerts-section">
+      <h3>Alertas y Notificaciones</h3>
+      <div class="alerts-grid">
+        <div class="alert-card garantia-vencida">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-content">
+            <div class="alert-number" id="garantias-vencidas">0</div>
+            <div class="alert-label">Garantías Vencidas</div>
+          </div>
+        </div>
+        
+        <div class="alert-card garantia-por-vencer">
+          <div class="alert-icon">🔔</div>
+          <div class="alert-content">
+            <div class="alert-number" id="garantias-por-vencer">0</div>
+            <div class="alert-label">Por Vencer (30 días)</div>
+          </div>
+        </div>
+        
+        <div class="alert-card equipos-criticos">
+          <div class="alert-icon">🚨</div>
+          <div class="alert-content">
+            <div class="alert-number" id="equipos-criticos-problema">0</div>
+            <div class="alert-label">Críticos con Problemas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Distribución por Categorías -->
+    <div class="categories-section">
+      <h3>Distribución por Categorías</h3>
+      <div class="categories-grid">
+        <div class="category-card alta-tecnologia">
+          <div class="category-bar">
+            <div class="category-fill" id="bar-alta-tecnologia"></div>
+          </div>
+          <div class="category-info">
+            <span class="category-name">Alta Tecnología</span>
+            <span class="category-count" id="count-alta-tecnologia">0</span>
+          </div>
+        </div>
+        
+        <div class="category-card soporte-vida">
+          <div class="category-bar">
+            <div class="category-fill" id="bar-soporte-vida"></div>
+          </div>
+          <div class="category-info">
+            <span class="category-name">Soporte de Vida</span>
+            <span class="category-count" id="count-soporte-vida">0</span>
+          </div>
+        </div>
+        
+        <div class="category-card critico">
+          <div class="category-bar">
+            <div class="category-fill" id="bar-critico"></div>
+          </div>
+          <div class="category-info">
+            <span class="category-name">Crítico</span>
+            <span class="category-count" id="count-critico">0</span>
+          </div>
+        </div>
+        
+        <div class="category-card general">
+          <div class="category-bar">
+            <div class="category-fill" id="bar-general"></div>
+          </div>
+          <div class="category-info">
+            <span class="category-name">General</span>
+            <span class="category-count" id="count-general">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Equipos que Requieren Atención -->
+    <div class="attention-section">
+      <h3>Equipos que Requieren Atención</h3>
+      <div id="equipos-atencion" class="equipos-atencion-lista">
+        <!-- Se llenará dinámicamente -->
+      </div>
+    </div>
+
+    <!-- Botones de Acción del Dashboard -->
+    <div class="dashboard-actions">
+      <button id="generar-reporte-dashboard" class="btn-reporte-dashboard">
+        📊 Generar Reporte Dashboard
+      </button>
+      <button id="actualizar-dashboard" class="btn-actualizar-dashboard">
+        🔄 Actualizar Dashboard
+      </button>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- Módulo de Verificación Diaria -->
+  <div id="modulo-verificacion" class="modulo-verificacion">
+    <h2>Verificación Diaria de Equipos</h2>
+    
+    <!-- Selector de Equipo para Verificar -->
+    <div class="selector-equipo">
+      <h3>Seleccionar Equipo para Verificación</h3>
+      <div class="equipo-selector-container">
+        <div class="selector-grupo">
+          <label for="equipo-verificar">Equipo:</label>
+          <select id="equipo-verificar">
+            <option value="">Seleccionar equipo...</option>
+          </select>
+        </div>
+        <div class="selector-grupo">
+          <label for="responsable-verificacion">Responsable:</label>
+          <input type="text" id="responsable-verificacion" placeholder="Nombre del verificador" required />
+        </div>
+        <div class="selector-grupo">
+          <button id="iniciar-verificacion" class="btn-iniciar-verificacion">🔍 Iniciar Verificación</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario de Verificación -->
+    <div id="formulario-verificacion" class="formulario-verificacion" style="display: none;">
+      <div class="info-equipo-verificacion">
+        <h3 id="nombre-equipo-verificacion"></h3>
+        <div class="datos-equipo-verificacion">
+          <span id="ubicacion-equipo-verificacion"></span> | 
+          <span id="categoria-equipo-verificacion"></span> | 
+          <span id="serie-equipo-verificacion"></span>
+        </div>
+      </div>
+
+      <form id="form-verificacion">
+        <div id="checklist-container" class="checklist-container">
+          <!-- Se llenará dinámicamente con el checklist -->
+        </div>
+
+        <div class="observaciones-verificacion">
+          <label for="observaciones-verificacion">Observaciones de la Verificación:</label>
+          <textarea id="observaciones-verificacion" rows="4" placeholder="Observaciones generales, problemas encontrados, recomendaciones..."></textarea>
+        </div>
+
+        <div class="resultado-verificacion">
+          <label for="resultado-general">Resultado General:</label>
+          <select id="resultado-general" required>
+            <option value="">Seleccionar resultado...</option>
+            <option value="conforme">✅ Conforme - Equipo operativo</option>
+            <option value="observaciones">⚠️ Con observaciones - Requiere atención</option>
+            <option value="no-conforme">❌ No conforme - Requiere intervención inmediata</option>
+          </select>
+        </div>
+
+        <div class="acciones-verificacion">
+          <button type="submit" class="btn-guardar-verificacion">💾 Guardar Verificación</button>
+          <button type="button" id="cancelar-verificacion" class="btn-cancelar-verificacion">❌ Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Historial de Verificaciones -->
+    <div class="historial-verificaciones">
+      <h3>Historial de Verificaciones Recientes</h3>
+      <div class="filtros-historial">
+        <select id="filtro-equipo-historial">
+          <option value="">Todos los equipos</option>
+        </select>
+        <select id="filtro-resultado-historial">
+          <option value="">Todos los resultados</option>
+          <option value="conforme">Conformes</option>
+          <option value="observaciones">Con observaciones</option>
+          <option value="no-conforme">No conformes</option>
+        </select>
+        <input type="date" id="filtro-fecha-desde" placeholder="Fecha desde">
+        <input type="date" id="filtro-fecha-hasta" placeholder="Fecha hasta">
+        <button id="aplicar-filtros-historial" class="btn-aplicar-filtros">Filtrar</button>
+        <button id="exportar-verificaciones" class="btn-exportar">📊 Exportar CSV</button>
+      </div>
+      
+      <div id="tabla-verificaciones-container">
+        <table id="tabla-verificaciones">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Equipo</th>
+              <th>Ubicación</th>
+              <th>Responsable</th>
+              <th>Resultado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Se llenará dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- Sistema de Alertas Automáticas -->
+  <div id="sistema-alertas" class="sistema-alertas">
+    <h2>Sistema de Alertas Automáticas</h2>
+    
+    <!-- Panel de Notificaciones Activas -->
+    <div class="panel-notificaciones">
+      <div class="header-notificaciones">
+        <h3>🔔 Notificaciones Activas</h3>
+        <div class="controles-notificaciones">
+          <button id="marcar-todas-leidas" class="btn-marcar-leidas">✅ Marcar Todas como Leídas</button>
+          <button id="configurar-alertas" class="btn-configurar">⚙️ Configurar Alertas</button>
+          <button id="limpiar-notificaciones" class="btn-limpiar">🗑️ Limpiar Notificaciones</button>
+        </div>
+      </div>
+      
+      <div id="contador-notificaciones" class="contador-notificaciones">
+        <span class="badge-notificaciones" id="badge-total">0</span> notificaciones activas
+      </div>
+      
+      <div id="lista-notificaciones" class="lista-notificaciones">
+        <!-- Se llenará dinámicamente -->
+      </div>
+    </div>
+
+    <!-- Configuración de Alertas -->
+    <div id="modal-configuracion-alertas" class="modal-configuracion" style="display: none;">
+      <div class="modal-content">
+        <span class="close" onclick="cerrarConfiguracionAlertas()">&times;</span>
+        <h3>⚙️ Configuración de Alertas Automáticas</h3>
+        
+        <div class="config-grid">
+          <div class="config-grupo">
+            <h4>📅 Alertas de Garantía</h4>
+            <label>
+              <input type="checkbox" id="alerta-garantia-vencida" checked>
+              Garantías vencidas
+            </label>
+            <label>
+              <input type="checkbox" id="alerta-garantia-por-vencer" checked>
+              Garantías por vencer en:
+              <select id="dias-garantia-alerta">
+                <option value="7">7 días</option>
+                <option value="15">15 días</option>
+                <option value="30" selected>30 días</option>
+                <option value="60">60 días</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="config-grupo">
+            <h4>🔧 Alertas de Mantenimiento</h4>
+            <label>
+              <input type="checkbox" id="alerta-equipos-criticos" checked>
+              Equipos críticos fuera de servicio
+            </label>
+            <label>
+              <input type="checkbox" id="alerta-verificaciones-pendientes" checked>
+              Verificaciones diarias pendientes
+            </label>
+            <label>
+              <input type="checkbox" id="alerta-mantenimiento-prolongado" checked>
+              Equipos en mantenimiento por más de:
+              <select id="dias-mantenimiento-alerta">
+                <option value="3">3 días</option>
+                <option value="7" selected>7 días</option>
+                <option value="15">15 días</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="config-grupo">
+            <h4>🚨 Alertas Críticas</h4>
+            <label>
+              <input type="checkbox" id="alerta-soporte-vida" checked>
+              Equipos de soporte de vida con problemas
+            </label>
+            <label>
+              <input type="checkbox" id="alerta-verificaciones-no-conformes" checked>
+              Verificaciones no conformes recientes
+            </label>
+          </div>
+
+          <div class="config-grupo">
+            <h4>⏰ Frecuencia de Verificación</h4>
+            <label>
+              Verificar alertas cada:
+              <select id="frecuencia-alertas">
+                <option value="300000">5 minutos</option>
+                <option value="600000">10 minutos</option>
+                <option value="1800000" selected>30 minutos</option>
+                <option value="3600000">1 hora</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="acciones-configuracion">
+          <button id="guardar-configuracion" class="btn-guardar-config">💾 Guardar Configuración</button>
+          <button id="probar-alertas" class="btn-probar">🧪 Probar Alertas</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen de Alertas por Tipo -->
+    <div class="resumen-alertas">
+      <h3>📊 Resumen de Alertas por Tipo</h3>
+      <div class="alertas-grid">
+        <div class="alerta-tipo critica">
+          <div class="alerta-icono">🚨</div>
+          <div class="alerta-info">
+            <div class="alerta-count" id="count-criticas">0</div>
+            <div class="alerta-label">Críticas</div>
+          </div>
+        </div>
+        
+        <div class="alerta-tipo advertencia">
+          <div class="alerta-icono">⚠️</div>
+          <div class="alerta-info">
+            <div class="alerta-count" id="count-advertencias">0</div>
+            <div class="alerta-label">Advertencias</div>
+          </div>
+        </div>
+        
+        <div class="alerta-tipo informativa">
+          <div class="alerta-icono">ℹ️</div>
+          <div class="alerta-info">
+            <div class="alerta-count" id="count-informativas">0</div>
+            <div class="alerta-label">Informativas</div>
+          </div>
+        </div>
+        
+        <div class="alerta-tipo mantenimiento">
+          <div class="alerta-icono">🔧</div>
+          <div class="alerta-info">
+            <div class="alerta-count" id="count-mantenimiento">0</div>
+            <div class="alerta-label">Mantenimiento</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Últimas Acciones del Sistema -->
+    <div class="acciones-sistema">
+      <h3>📋 Últimas Acciones del Sistema</h3>
+      <div id="log-acciones" class="log-acciones">
+        <!-- Se llenará dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- Formulario de Registro -->
+  <div id="seccion-registro">
+    <h2>Registro de Equipos</h2>
 
   <form id="form-equipo">
-    <label for="nombre">Nombre del Equipo:</label>
-    <input type="text" id="nombre" required />
+    <!-- Información Básica -->
+    <fieldset>
+      <legend>Información Básica</legend>
+      
+      <label for="nombre">Nombre del Equipo:</label>
+      <input type="text" id="nombre" required />
 
-    <label for="categoria">Categoría:</label>
-    <select id="categoria" required>
-      <option value="alta-tecnologia">Alta Tecnología</option>
-      <option value="soporte-vida">Soporte de Vida</option>
-      <option value="crítico">Crítico</option>
-    </select>
+      <label for="marca">Marca:</label>
+      <input type="text" id="marca" required />
 
-    <label for="ubicacion">Ubicación:</label>
-    <input type="text" id="ubicacion" required />
+      <label for="modelo">Modelo:</label>
+      <input type="text" id="modelo" required />
 
-    <label for="serie">No. de Serie:</label>
-    <input type="text" id="serie" required />
+      <label for="serie">No. de Serie:</label>
+      <input type="text" id="serie" required />
+
+      <label for="categoria">Categoría:</label>
+      <select id="categoria" required>
+        <option value="">Seleccionar...</option>
+        <option value="alta-tecnologia">Alta Tecnología</option>
+        <option value="soporte-vida">Soporte de Vida</option>
+        <option value="critico">Crítico</option>
+        <option value="general">General</option>
+      </select>
+
+      <label for="estado">Estado del Equipo:</label>
+      <select id="estado" required>
+        <option value="">Seleccionar...</option>
+        <option value="operativo">Operativo</option>
+        <option value="mantenimiento">En Mantenimiento</option>
+        <option value="fuera-servicio">Fuera de Servicio</option>
+        <option value="en-calibracion">En Calibración</option>
+      </select>
+    </fieldset>
+
+    <!-- Ubicación y Responsable -->
+    <fieldset>
+      <legend>Ubicación y Responsable</legend>
+      
+      <label for="ubicacion">Ubicación:</label>
+      <input type="text" id="ubicacion" required placeholder="Ej: UCI - Cama 01" />
+
+      <label for="responsable">Responsable del Equipo:</label>
+      <input type="text" id="responsable" placeholder="Nombre del responsable" />
+
+      <label for="departamento">Departamento:</label>
+      <input type="text" id="departamento" placeholder="Ej: Cuidados Intensivos" />
+    </fieldset>
+
+    <!-- Información Comercial -->
+    <fieldset>
+      <legend>Información Comercial</legend>
+      
+      <label for="proveedor">Proveedor:</label>
+      <input type="text" id="proveedor" required />
+
+      <label for="numero-contrato">Número de Contrato:</label>
+      <input type="text" id="numero-contrato" required />
+
+      <label for="fecha-compra">Fecha de Compra:</label>
+      <input type="date" id="fecha-compra" required />
+
+      <label for="fecha-garantia">Fecha de Vencimiento Garantía:</label>
+      <input type="date" id="fecha-garantia" />
+
+      <label for="costo">Costo/Valor (MXN):</label>
+      <input type="number" id="costo" step="0.01" min="0" placeholder="0.00" />
+    </fieldset>
+
+    <!-- Documentación -->
+    <fieldset>
+      <legend>Documentación</legend>
+      
+      <label for="imagen">Imagen del equipo (URL):</label>
+      <input type="url" id="imagen" placeholder="http://..." />
+
+      <label for="manual">Manual/Documentación (URL):</label>
+      <input type="url" id="manual" placeholder="http://..." />
+
+      <label for="observaciones">Observaciones:</label>
+      <textarea id="observaciones" rows="3" placeholder="Observaciones adicionales..."></textarea>
+    </fieldset>
 
     <button type="submit">Registrar Equipo</button>
   </form>
@@ -32,13 +494,75 @@
   <hr />
 
   <h2>Equipos Registrados</h2>
+  
+  <!-- Panel de Filtros y Búsqueda -->
+  <div class="panel-filtros">
+    <h3>Filtros y Búsqueda</h3>
+    <div class="filtros-container">
+      <div class="filtro-grupo">
+        <label for="buscar-texto">Buscar:</label>
+        <input type="text" id="buscar-texto" placeholder="Nombre, marca, serie, ubicación..." />
+      </div>
+      
+      <div class="filtro-grupo">
+        <label for="filtro-estado">Estado:</label>
+        <select id="filtro-estado">
+          <option value="">Todos los estados</option>
+          <option value="operativo">Operativo</option>
+          <option value="mantenimiento">En Mantenimiento</option>
+          <option value="fuera-servicio">Fuera de Servicio</option>
+          <option value="en-calibracion">En Calibración</option>
+        </select>
+      </div>
+      
+      <div class="filtro-grupo">
+        <label for="filtro-categoria">Categoría:</label>
+        <select id="filtro-categoria">
+          <option value="">Todas las categorías</option>
+          <option value="alta-tecnologia">Alta Tecnología</option>
+          <option value="soporte-vida">Soporte de Vida</option>
+          <option value="critico">Crítico</option>
+          <option value="general">General</option>
+        </select>
+      </div>
+      
+      <div class="filtro-grupo">
+        <label for="filtro-garantia">Garantía:</label>
+        <select id="filtro-garantia">
+          <option value="">Todas</option>
+          <option value="vigente">Vigente</option>
+          <option value="por-vencer">Por Vencer (30 días)</option>
+          <option value="vencida">Vencida</option>
+          <option value="sin-garantia">Sin Garantía</option>
+        </select>
+      </div>
+      
+      <div class="filtro-grupo">
+        <button id="limpiar-filtros" class="btn-limpiar">Limpiar Filtros</button>
+        <button id="exportar-csv" class="btn-exportar">Exportar CSV</button>
+      </div>
+    </div>
+    
+    <div class="estadisticas">
+      <span id="contador-equipos">Total: 0 equipos</span>
+      <span id="contador-filtrados"></span>
+    </div>
+  </div>
+
   <table id="tabla-equipos">
     <thead>
       <tr>
-        <th>Nombre</th>
-        <th>Categoría</th>
-        <th>Ubicación</th>
         <th>Serie</th>
+        <th>Nombre</th>
+        <th>Marca/Modelo</th>
+        <th>Ubicación</th>
+        <th>Estado</th>
+        <th>Categoría</th>
+        <th>Responsable</th>
+        <th>Proveedor</th>
+        <th>Garantía</th>
+        <th>Imagen</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -49,3 +573,6 @@
   <script src="main.js"></script>
 </body>
 </html>
+
+
+
