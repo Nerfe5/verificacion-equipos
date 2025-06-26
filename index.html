@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Equipos Médicos</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Registro de Equipos Médicos</h1>
+
+  <form id="form-equipo">
+    <label for="nombre">Nombre del Equipo:</label>
+    <input type="text" id="nombre" required />
+
+    <label for="categoria">Categoría:</label>
+    <select id="categoria" required>
+      <option value="alta-tecnologia">Alta Tecnología</option>
+      <option value="soporte-vida">Soporte de Vida</option>
+      <option value="crítico">Crítico</option>
+    </select>
+
+    <label for="ubicacion">Ubicación:</label>
+    <input type="text" id="ubicacion" required />
+
+    <label for="serie">No. de Serie:</label>
+    <input type="text" id="serie" required />
+
+    <button type="submit">Registrar Equipo</button>
+  </form>
+
+  <hr />
+
+  <h2>Equipos Registrados</h2>
+  <table id="tabla-equipos">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Categoría</th>
+        <th>Ubicación</th>
+        <th>Serie</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Se llenará con JS -->
+    </tbody>
+  </table>
+
+  <script src="main.js"></script>
+</body>
+</html>
