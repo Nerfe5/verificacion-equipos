@@ -56,4 +56,12 @@ const equiposPrueba = [
   }
 ];
 
-localStorage.setItem("equiposMedicos", JSON.stringify(equiposPrueba));
+// ========================================
+// NOTA IMPORTANTE: 
+// Este archivo solo DEFINE los datos de prueba
+// NO los carga automáticamente al localStorage
+// Los datos se cargan únicamente cuando el usuario
+// presiona el botón "📋 Cargar Datos de Prueba"
+// ========================================
+
+console.log('Archivo test_data.js cargado - datos definidos pero NO cargados automáticamente');

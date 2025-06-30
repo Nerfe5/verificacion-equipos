@@ -1,6 +1,16 @@
-console.log('Agregando datos de prueba...'); 
+// ========================================
+// SCRIPT DE DATOS DE PRUEBA
+// ========================================
+// Este archivo contiene únicamente funciones para cargar/limpiar datos de prueba
+// NO ejecuta nada automáticamente - solo provee las funciones
+// ========================================
 
-// Función para cargar datos de prueba
+console.log('Script agregar_datos_prueba.js cargado - funciones disponibles'); 
+
+// ========================================
+// FUNCIÓN PARA CARGAR DATOS DE PRUEBA
+// ========================================
+// Esta función se ejecuta ÚNICAMENTE cuando el usuario presiona el botón correspondiente
 function cargarDatosPrueba() {
   const equiposPrueba = [
     {
@@ -127,7 +137,11 @@ function cargarDatosPrueba() {
   console.log('Datos de prueba cargados:', equiposPrueba.length, 'equipos');
 }
 
-// Función para limpiar todos los datos
+// ========================================
+// FUNCIÓN PARA LIMPIAR TODOS LOS DATOS
+// ========================================
+// Esta función se ejecuta ÚNICAMENTE cuando el usuario presiona el botón correspondiente
+// Elimina TODOS los equipos del localStorage después de confirmación
 function limpiarTodosLosDatos() {
   if (confirm('¿Estás seguro de que deseas eliminar TODOS los datos? Esta acción no se puede deshacer.')) {
     localStorage.setItem('equiposMedicos', '[]');
@@ -148,5 +162,11 @@ function limpiarTodosLosDatos() {
   }
 }
 
-// Cargar datos automáticamente al cargar el script
-cargarDatosPrueba();
+// ========================================
+// NOTA IMPORTANTE: 
+// Los datos de prueba se cargan ÚNICAMENTE cuando el usuario
+// presiona explícitamente el botón "📋 Cargar Datos de Prueba"
+// NO se cargan automáticamente al iniciar la aplicación
+// ========================================
+
+console.log('Script agregar_datos_prueba.js cargado - NO se cargarán datos automáticamente');

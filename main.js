@@ -39,8 +39,17 @@ document.getElementById("limpiarDatos").addEventListener("click", () => {
 });
 inputCSV.addEventListener("change", handleCSV);
 
+// ========================================
+// INICIALIZACIÓN DE LA APLICACIÓN
+// ========================================
+// Esta función se ejecuta cuando se carga la página
+// NO carga datos de prueba automáticamente
+// Solo inicializa la interfaz con los datos existentes
 window.onload = function () {
-  // Limpiar números de serie problemáticos al cargar
+  // ========================================
+  // 1. LIMPIAR NÚMEROS DE SERIE PROBLEMÁTICOS
+  // ========================================
+  // Detecta y corrige automáticamente números de serie con comillas
   const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
   let equiposModificados = false;
   
@@ -57,13 +66,25 @@ window.onload = function () {
     console.log('Se han limpiado automáticamente los números de serie problemáticos.');
   }
   
-  // Los datos de prueba se cargan solo cuando el usuario presiona el botón correspondiente
+  // ========================================
+  // 2. NOTA IMPORTANTE SOBRE DATOS DE PRUEBA
+  // ========================================
+  // Los datos de prueba se cargan ÚNICAMENTE cuando el usuario
+  // presiona explícitamente el botón "📋 Cargar Datos de Prueba"
+  // NO se cargan automáticamente aquí
   
-  cargarEquipos();
-  actualizarDashboard(); // Actualizar dashboard al cargar
+  // ========================================
+  // 3. INICIALIZAR INTERFAZ Y MÓDULOS
+  // ========================================
+  cargarEquipos(); // Cargar equipos existentes (NO crea nuevos)
+  actualizarDashboard(); // Actualizar dashboard con datos existentes
   inicializarModuloVerificacion(); // Inicializar verificación
   inicializarSistemaAlertas(); // Inicializar sistema de alertas
   inicializarDashboardGrafico(); // Inicializar dashboard gráfico
+  
+  // ========================================
+  // 4. CONFIGURAR EVENT LISTENERS
+  // ========================================
   
   // Event listeners para el formulario de registro de equipos
   form.addEventListener("submit", manejarSubmitEquipo);
