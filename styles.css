@@ -218,6 +218,22 @@ tr:hover {
   background-color: #e0a800;
 }
 
+.btn-clonar {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  margin: 2px;
+  font-weight: bold;
+}
+
+.btn-clonar:hover {
+  background-color: #138496;
+}
+
 .mensaje-edicion {
   margin-bottom: 20px;
 }
@@ -1399,6 +1415,108 @@ tr:hover {
   color: #6c757d;
   padding: 2rem;
   font-style: italic;
+}
+
+/* Estilos específicos para el modal de clonado */
+.info-equipo-original {
+  background-color: #e8f4fd;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.info-equipo-original h3 {
+  color: #007bff;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.datos-equipo-original {
+  background-color: white;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: monospace;
+  border-left: 4px solid #007bff;
+}
+
+.campo-clonado {
+  margin-bottom: 15px;
+}
+
+.campo-clonado label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.campo-clonado input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.campo-clonado input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.campo-clonado.opcional label {
+  color: #666;
+  font-style: italic;
+}
+
+.campo-clonado small {
+  display: block;
+  color: #666;
+  font-size: 12px;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.acciones-clonado {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.btn-confirmar-clonar {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-confirmar-clonar:hover {
+  background-color: #218838;
+}
+
+.btn-cancelar-clonar {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-cancelar-clonar:hover {
+  background-color: #5a6268;
 }
 
 /* Responsive */
