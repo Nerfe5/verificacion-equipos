@@ -57,60 +57,13 @@ window.onload = function () {
     console.log('Se han limpiado automáticamente los números de serie problemáticos.');
   }
   
-  // Agregar datos de prueba si no existen equipos
-  const equiposExistentes = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
-  if (equiposExistentes.length === 0) {
-    const equiposPrueba = [
-      {
-        nombre: 'Ventilador Mecánico',
-        marca: 'Philips',
-        modelo: 'V60',
-        serie: 'VM001',
-        categoria: 'soporte-vida',
-        estado: 'operativo',
-        ubicacion: 'UCI - Cama 01',
-        responsable: 'Dr. García',
-        departamento: 'Cuidados Intensivos',
-        proveedor: 'MedEquip SA',
-        contrato: 'CT-2024-001',
-        fechaCompra: '2024-01-15',
-        fechaGarantia: '2026-01-15',
-        costo: '150000',
-        imagen: '',
-        manual: '',
-        observaciones: 'Equipo en perfecto estado',
-        fechaRegistro: new Date().toISOString(),
-        ultimaActualizacion: new Date().toISOString()
-      },
-      {
-        nombre: 'Monitor de Signos Vitales',
-        marca: 'GE',
-        modelo: 'B650',
-        serie: 'MSV002',
-        categoria: 'critico',
-        estado: 'mantenimiento',
-        ubicacion: 'UCI - Cama 03',
-        responsable: 'Enfermera López',
-        departamento: 'Cuidados Intensivos',
-        proveedor: 'TechMed Corp',
-        contrato: 'CT-2024-002',
-        fechaCompra: '2023-06-10',
-        fechaGarantia: '2024-06-10',
-        costo: '85000',
-        imagen: '',
-        manual: '',
-        observaciones: 'En mantenimiento preventivo',
-        fechaRegistro: new Date().toISOString(),
-        ultimaActualizacion: new Date().toISOString()
-      }
-    ];
-    localStorage.setItem("equiposMedicos", JSON.stringify(equiposPrueba));
-  }
+  // Los datos de prueba se cargan solo cuando el usuario presiona el botón correspondiente
   
   cargarEquipos();
   actualizarDashboard(); // Actualizar dashboard al cargar
   inicializarModuloVerificacion(); // Inicializar verificación
   inicializarSistemaAlertas(); // Inicializar sistema de alertas
+  inicializarDashboardGrafico(); // Inicializar dashboard gráfico
   
   // Event listeners para el formulario de registro de equipos
   form.addEventListener("submit", manejarSubmitEquipo);
@@ -552,406 +505,266 @@ function actualizarDashboard() {
   
   // Equipos que requieren atención
   actualizarEquiposAtencion();
-}
-
-// Función para actualizar equipos que requieren atención
-function actualizarEquiposAtencion() {
-  const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
-  const contenedor = document.getElementById("equipos-atencion");
   
-  const equiposAtencion = equipos.filter(equipo => {
-    // Criterios para requerir atención:
-    // 1. Equipos críticos fuera de servicio
-    // 2. Garantías vencidas
-    // 3. Equipos en mantenimiento por mucho tiempo
-    
-    const esCritico = equipo.categoria === 'critico' || equipo.categoria === 'soporte-vida';
-    const fueraServicio = equipo.estado === 'fuera-servicio';
-    const enMantenimiento = equipo.estado === 'mantenimiento';
-    
-    // Verificar garantía vencida
-    let garantiaVencida = false;
-    if (equipo.fechaGarantia) {
-      const ahora = new Date();
-      const vencimiento = new Date(equipo.fechaGarantia);
-      garantiaVencida = vencimiento < ahora;
-    }
-    
-    return (esCritico && (fueraServicio || enMantenimiento)) || garantiaVencida;
-  });
-  
-  if (equiposAtencion.length === 0) {
-    contenedor.innerHTML = '<div class="sin-problemas">✅ Todos los equipos están en buen estado</div>';
-    return;
-  }
-  
-  contenedor.innerHTML = equiposAtencion.map(equipo => {
-    let problema = '';
-    const esCritico = equipo.categoria === 'critico' || equipo.categoria === 'soporte-vida';
-    const fueraServicio = equipo.estado === 'fuera-servicio';
-    const enMantenimiento = equipo.estado === 'mantenimiento';
-    
-    if (equipo.fechaGarantia && new Date(equipo.fechaGarantia) < new Date()) {
-      problema = 'Garantía vencida';
-    } else if (esCritico && fueraServicio) {
-      problema = 'Equipo crítico fuera de servicio';
-    } else if (esCritico && enMantenimiento) {
-      problema = 'Equipo crítico en mantenimiento';
-    }
-    
-    return `
-      <div class="equipo-atencion-item">
-        <div class="equipo-atencion-info">
-          <div class="equipo-atencion-nombre">${equipo.nombre}</div>
-          <div class="equipo-atencion-problema">${problema}</div>
-          <div class="equipo-atencion-ubicacion">${equipo.ubicacion}</div>
-        </div>
-        <button class="btn-ver-equipo" onclick="verDetalles('${equipo.serie}')">Ver Detalles</button>
-      </div>
-    `;
-  }).join('');
-}
-
-// Función para cargar equipos en selector
-function cargarEquiposEnSelector() {
-  const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
-  const selector = document.getElementById("equipo-verificar");
-  const selectorHistorial = document.getElementById("filtro-equipo-historial");
-  
-  if (selector) {
-    selector.innerHTML = '<option value="">Seleccionar equipo...</option>';
-    equipos.forEach(equipo => {
-      selector.innerHTML += `<option value="${equipo.serie}">${equipo.nombre} - ${equipo.ubicacion}</option>`;
-    });
-  }
-  
-  if (selectorHistorial) {
-    selectorHistorial.innerHTML = '<option value="">Todos los equipos</option>';
-    equipos.forEach(equipo => {
-      selectorHistorial.innerHTML += `<option value="${equipo.serie}">${equipo.nombre} - ${equipo.ubicacion}</option>`;
-    });
-  }
+  // Actualizar también el dashboard gráfico
+  actualizarDashboardGrafico();
 }
 
 // ==============================================
-// FUNCIONES DE FILTRADO Y BÚSQUEDA
+// FUNCIONES PARA DASHBOARD GRÁFICO CSS
 // ==============================================
 
-// Función para aplicar filtros
-function aplicarFiltros() {
+// Función principal para actualizar todos los gráficos
+function actualizarDashboardGrafico() {
   const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
-  const textoBusqueda = document.getElementById('buscar-texto').value.toLowerCase();
-  const filtroEstado = document.getElementById('filtro-estado').value;
-  const filtroCategoria = document.getElementById('filtro-categoria').value;
-  const filtroGarantia = document.getElementById('filtro-garantia').value;
   
-  equiposFiltrados = equipos.filter(equipo => {
-    // Filtro de texto
-    const coincideTexto = !textoBusqueda || 
-      equipo.nombre.toLowerCase().includes(textoBusqueda) ||
-      equipo.marca.toLowerCase().includes(textoBusqueda) ||
-      equipo.modelo.toLowerCase().includes(textoBusqueda) ||
-      equipo.serie.toLowerCase().includes(textoBusqueda) ||
-      equipo.ubicacion.toLowerCase().includes(textoBusqueda) ||
-      (equipo.responsable && equipo.responsable.toLowerCase().includes(textoBusqueda));
-    
-    // Filtro de estado
-    const coincideEstado = !filtroEstado || equipo.estado === filtroEstado;
-    
-    // Filtro de categoría
-    const coincideCategoria = !filtroCategoria || equipo.categoria === filtroCategoria;
-    
-    // Filtro de garantía
-    let coincideGarantia = true;
-    if (filtroGarantia) {
-      const estadoGarantia = getGarantiaEstado(equipo.fechaGarantia);
-      coincideGarantia = estadoGarantia.class === filtroGarantia;
-    }
-    
-    return coincideTexto && coincideEstado && coincideCategoria && coincideGarantia;
-  });
-  
-  // Mostrar equipos filtrados
-  tabla.innerHTML = "";
-  equiposFiltrados.forEach(equipo => agregarFilaTabla(equipo));
-  
-  actualizarContadores();
+  actualizarGraficoEstados(equipos);
+  actualizarIndicadorOperatividad(equipos);
+  actualizarGraficoCategorias(equipos);
+  actualizarMetricasGarantias(equipos);
 }
 
-// Función para limpiar filtros
-function limpiarFiltros() {
-  document.getElementById('buscar-texto').value = '';
-  document.getElementById('filtro-estado').value = '';
-  document.getElementById('filtro-categoria').value = '';
-  document.getElementById('filtro-garantia').value = '';
-  
-  aplicarFiltros();
-}
-
-// Función para exportar CSV
-function exportarCSV() {
-  const equipos = equiposFiltrados.length > 0 ? equiposFiltrados : JSON.parse(localStorage.getItem("equiposMedicos")) || [];
-  
-  if (equipos.length === 0) {
-    alert('No hay equipos para exportar.');
-    return;
-  }
-  
-  const encabezados = [
-    'Ubicación', 'Categoría', 'Nombre', 'Marca', 'Modelo', 'Serie', 'Contrato', 'Imagen',
-    'Estado', 'Responsable', 'Departamento', 'Proveedor', 'Fecha Compra', 'Fecha Garantía',
-    'Costo', 'Manual', 'Observaciones'
-  ];
-  
-  let csvContent = encabezados.join(',') + '\n';
-  
-  equipos.forEach(equipo => {
-    const fila = [
-      `"${equipo.ubicacion || ''}"`,
-      `"${equipo.categoria || ''}"`,
-      `"${equipo.nombre || ''}"`,
-      `"${equipo.marca || ''}"`,
-      `"${equipo.modelo || ''}"`,
-      `"${equipo.serie || ''}"`,
-      `"${equipo.contrato || ''}"`,
-      `"${equipo.imagen || ''}"`,
-      `"${equipo.estado || ''}"`,
-      `"${equipo.responsable || ''}"`,
-      `"${equipo.departamento || ''}"`,
-      `"${equipo.proveedor || ''}"`,
-      `"${equipo.fechaCompra || ''}"`,
-      `"${equipo.fechaGarantia || ''}"`,
-      `"${equipo.costo || ''}"`,
-      `"${equipo.manual || ''}"`,
-      `"${equipo.observaciones || ''}"`
-    ];
-    csvContent += fila.join(',') + '\n';
-  });
-  
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', `equipos_medicos_${new Date().toISOString().split('T')[0]}.csv`);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-// ==============================================
-// FUNCIONES DE CLONADO DE EQUIPOS
-// ==============================================
-
-// Función para clonar equipo
-function clonarEquipo(serie) {
-  const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
-  const equipoOriginal = equipos.find(e => e.serie === serie);
-  
-  if (!equipoOriginal) {
-    alert('Equipo no encontrado.');
-    return;
-  }
-  
-  mostrarModalClonado(equipoOriginal);
-}
-
-// Función para mostrar modal de clonado
-function mostrarModalClonado(equipoOriginal) {
-  const modal = document.createElement('div');
-  modal.className = 'modal';
-  modal.id = 'modal-clonar';
-  
-  modal.innerHTML = `
-    <div class="modal-content">
-      <span class="close" onclick="cerrarModalClonado()">&times;</span>
-      <h2>🔄 Clonar Equipo</h2>
-      
-      <div class="info-equipo-original">
-        <h3>Equipo Original:</h3>
-        <div class="datos-equipo-original">
-          <strong>${equipoOriginal.nombre}</strong> - ${equipoOriginal.marca} ${equipoOriginal.modelo}<br>
-          <span>Serie: ${equipoOriginal.serie}</span> | <span>${equipoOriginal.ubicacion}</span>
-        </div>
-      </div>
-      
-      <form id="form-clonar-equipo">
-        <div class="campo-clonado">
-          <label for="nueva-serie">Nuevo Número de Serie:</label>
-          <input type="text" id="nueva-serie" required placeholder="Ingresa el nuevo número de serie">
-          <small>Este será el único campo que cambiará. Todo lo demás se copiará igual.</small>
-        </div>
-        
-        <div class="campo-clonado opcional">
-          <label for="nueva-ubicacion">Nueva Ubicación (opcional):</label>
-          <input type="text" id="nueva-ubicacion" placeholder="Dejar vacío para mantener: ${equipoOriginal.ubicacion}">
-        </div>
-        
-        <div class="campo-clonado opcional">
-          <label for="nuevo-responsable">Nuevo Responsable (opcional):</label>
-          <input type="text" id="nuevo-responsable" placeholder="Dejar vacío para mantener: ${equipoOriginal.responsable || 'No asignado'}">
-        </div>
-        
-        <div class="acciones-clonado">
-          <button type="submit" class="btn-confirmar-clonar">✅ Clonar Equipo</button>
-          <button type="button" class="btn-cancelar-clonar" onclick="cerrarModalClonado()">❌ Cancelar</button>
-        </div>
-      </form>
-    </div>
-  `;
-  
-  document.body.appendChild(modal);
-  
-  // Agregar event listener al formulario
-  document.getElementById('form-clonar-equipo').addEventListener('submit', function(e) {
-    e.preventDefault();
-    procesarClonado(equipoOriginal);
-  });
-  
-  // Focus en el campo de nueva serie
-  document.getElementById('nueva-serie').focus();
-}
-
-// Función para procesar el clonado
-function procesarClonado(equipoOriginal) {
-  const nuevaSerie = document.getElementById('nueva-serie').value.trim();
-  const nuevaUbicacion = document.getElementById('nueva-ubicacion').value.trim();
-  const nuevoResponsable = document.getElementById('nuevo-responsable').value.trim();
-  
-  if (!nuevaSerie) {
-    alert('Debes ingresar un número de serie.');
-    return;
-  }
-  
-  // Verificar que el nuevo número de serie no existe
-  if (verificarSerieExistente(nuevaSerie)) {
-    alert('Ya existe un equipo con ese número de serie. Por favor ingresa uno diferente.');
-    return;
-  }
-  
-  // Crear el equipo clonado
-  const equipoClonado = {
-    ...equipoOriginal,
-    serie: nuevaSerie,
-    ubicacion: nuevaUbicacion || equipoOriginal.ubicacion,
-    responsable: nuevoResponsable || equipoOriginal.responsable,
-    fechaRegistro: new Date().toISOString(),
-    ultimaActualizacion: new Date().toISOString()
+// Función para actualizar gráfico de estados (barras CSS)
+function actualizarGraficoEstados(equipos) {
+  const estados = {
+    'operativo': 0,
+    'mantenimiento': 0,
+    'fuera-servicio': 0,
+    'en-calibracion': 0
   };
   
-  // Agregar el equipo clonado
+  // Contar equipos por estado
+  equipos.forEach(equipo => {
+    if (estados.hasOwnProperty(equipo.estado)) {
+      estados[equipo.estado]++;
+    }
+  });
+  
+  const totalEquipos = equipos.length || 1;
+  
+  // Actualizar barras y valores
+  Object.keys(estados).forEach(estado => {
+    const count = estados[estado];
+    const porcentaje = (count / totalEquipos) * 100;
+    
+    const barra = document.getElementById(`barra-${estado}`);
+    const valor = document.getElementById(`valor-${estado}`);
+    
+    if (barra && valor) {
+      // Animación de la barra
+      setTimeout(() => {
+        barra.style.width = `${porcentaje}%`;
+      }, 100);
+      
+      valor.textContent = count;
+      barra.setAttribute('data-count', count);
+    }
+  });
+}
+
+// Función para actualizar indicador circular de operatividad
+function actualizarIndicadorOperatividad(equipos) {
+  const totalEquipos = equipos.length;
+  const equiposOperativos = equipos.filter(e => e.estado === 'operativo').length;
+  const porcentajeOperatividad = totalEquipos > 0 ? (equiposOperativos / totalEquipos) * 100 : 0;
+  
+  const circleProgress = document.getElementById('circle-operatividad');
+  const percentageElement = document.getElementById('operatividad-percentage');
+  const textoOperativos = document.getElementById('equipos-operativos-texto');
+  
+  if (circleProgress && percentageElement && textoOperativos) {
+    // Calcular el ángulo para el gradiente cónico
+    const angulo = (porcentajeOperatividad / 100) * 360;
+    
+    // Colores basados en el porcentaje
+    let color = '#e74c3c'; // Rojo para bajo
+    if (porcentajeOperatividad >= 80) {
+      color = '#27ae60'; // Verde para alto
+    } else if (porcentajeOperatividad >= 60) {
+      color = '#f39c12'; // Amarillo para medio
+    }
+    
+    // Actualizar el círculo con animación
+    setTimeout(() => {
+      circleProgress.style.background = `conic-gradient(${color} 0deg, ${color} ${angulo}deg, #e9ecef ${angulo}deg)`;
+    }, 200);
+    
+    percentageElement.textContent = `${Math.round(porcentajeOperatividad)}%`;
+    textoOperativos.textContent = `${equiposOperativos} de ${totalEquipos} equipos operativos`;
+  }
+}
+
+// Función para actualizar gráfico de categorías
+function actualizarGraficoCategorias(equipos) {
+  const categorias = {
+    'alta-tecnologia': 0,
+    'soporte-vida': 0,
+    'critico': 0,
+    'general': 0
+  };
+  
+  // Contar equipos por categoría
+  equipos.forEach(equipo => {
+    if (categorias.hasOwnProperty(equipo.categoria)) {
+      categorias[equipo.categoria]++;
+    }
+  });
+  
+  const totalEquipos = equipos.length || 1;
+  
+  // Actualizar barras y valores
+  Object.keys(categorias).forEach(categoria => {
+    const count = categorias[categoria];
+    const porcentaje = (count / totalEquipos) * 100;
+    
+    const barra = document.getElementById(`cat-barra-${categoria}`);
+    const valor = document.getElementById(`cat-valor-${categoria}`);
+    
+    if (barra && valor) {
+      // Animación de la barra
+      setTimeout(() => {
+        barra.style.width = `${porcentaje}%`;
+      }, 150);
+      
+      valor.textContent = count;
+    }
+  });
+}
+
+// Función para actualizar métricas de garantías
+function actualizarMetricasGarantias(equipos) {
+  const ahora = new Date();
+  let garantiasVigentes = 0;
+  let garantiasPorVencer = 0;
+  let garantiasVencidas = 0;
+  
+  equipos.forEach(equipo => {
+    if (equipo.fechaGarantia) {
+      const vencimiento = new Date(equipo.fechaGarantia);
+      const diasRestantes = Math.ceil((vencimiento - ahora) / (1000 * 60 * 60 * 24));
+      
+      if (diasRestantes < 0) {
+        garantiasVencidas++;
+      } else if (diasRestantes <= 30) {
+        garantiasPorVencer++;
+      } else {
+        garantiasVigentes++;
+      }
+    }
+  });
+  
+  // Actualizar valores
+  const vigentesElement = document.getElementById('garantias-vigentes-count');
+  const porVencerElement = document.getElementById('garantias-por-vencer-count');
+  const vencidasElement = document.getElementById('garantias-vencidas-count');
+  
+  if (vigentesElement) vigentesElement.textContent = garantiasVigentes;
+  if (porVencerElement) porVencerElement.textContent = garantiasPorVencer;
+  if (vencidasElement) vencidasElement.textContent = garantiasVencidas;
+}
+
+// Función para exportar dashboard como imagen (básica)
+function exportarDashboardImagen() {
+  // Implementación básica - en el futuro se puede mejorar con html2canvas
+  const dashboardData = {
+    fecha: new Date().toISOString(),
+    equipos: JSON.parse(localStorage.getItem("equiposMedicos")) || [],
+    timestamp: Date.now()
+  };
+  
+  const dataStr = JSON.stringify(dashboardData, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `dashboard_equipos_${new Date().toISOString().split('T')[0]}.json`;
+  link.click();
+  
+  URL.revokeObjectURL(url);
+  
+  alert('Dashboard exportado como archivo JSON. En futuras versiones se podrá exportar como imagen.');
+}
+
+// Función para inicializar el dashboard gráfico
+function inicializarDashboardGrafico() {
+  // Agregar event listeners para los botones del dashboard gráfico
+  const btnActualizarGraficos = document.getElementById('actualizar-graficos');
+  const btnExportarDashboard = document.getElementById('exportar-dashboard-imagen');
+  
+  if (btnActualizarGraficos) {
+    btnActualizarGraficos.addEventListener('click', () => {
+      actualizarDashboardGrafico();
+      // Actualizar también el dashboard principal
+      actualizarDashboard();
+      alert('Gráficos actualizados correctamente');
+    });
+  }
+  
+  if (btnExportarDashboard) {
+    btnExportarDashboard.addEventListener('click', exportarDashboardImagen);
+  }
+  
+  // Actualizar gráficos al inicializar
+  actualizarDashboardGrafico();
+}
+
+// Función modificada de actualizar dashboard para incluir gráficos
+function actualizarDashboard() {
   const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
-  equipos.push(equipoClonado);
-  localStorage.setItem("equiposMedicos", JSON.stringify(equipos));
   
-  // Cerrar modal
-  cerrarModalClonado();
+  // Estadísticas principales (código existente)
+  document.getElementById("total-equipos").textContent = equipos.length;
+  document.getElementById("equipos-operativos").textContent = equipos.filter(e => e.estado === 'operativo').length;
+  document.getElementById("equipos-mantenimiento").textContent = equipos.filter(e => e.estado === 'mantenimiento').length;
+  document.getElementById("equipos-fuera-servicio").textContent = equipos.filter(e => e.estado === 'fuera-servicio').length;
   
-  // Recargar tabla y dashboard
-  cargarEquipos();
-  actualizarDashboard();
-  cargarEquiposEnSelector();
+  // Alertas de garantía
+  const ahora = new Date();
+  let garantiasVencidas = 0;
+  let garantiasPorVencer = 0;
   
-  alert(`Equipo clonado exitosamente.\nNuevo equipo: ${equipoClonado.nombre} (Serie: ${nuevaSerie})`);
-  registrarAccionSistema(`Equipo "${equipoClonado.nombre}" clonado con serie ${nuevaSerie}`, 'informativa');
+  equipos.forEach(equipo => {
+    if (equipo.fechaGarantia) {
+      const vencimiento = new Date(equipo.fechaGarantia);
+      const diasRestantes = Math.ceil((vencimiento - ahora) / (1000 * 60 * 60 * 24));
+      
+      if (diasRestantes < 0) {
+        garantiasVencidas++;
+      } else if (diasRestantes <= 30) {
+        garantiasPorVencer++;
+      }
+    }
+  });
+  
+  document.getElementById("garantias-vencidas").textContent = garantiasVencidas;
+  document.getElementById("garantias-por-vencer").textContent = garantiasPorVencer;
+  
+  // Equipos críticos con problemas
+  const equiposCriticosProblema = equipos.filter(e => 
+    (e.categoria === 'critico' || e.categoria === 'soporte-vida') && 
+    (e.estado === 'fuera-servicio' || e.estado === 'mantenimiento')
+  ).length;
+  document.getElementById("equipos-criticos-problema").textContent = equiposCriticosProblema;
+  
+  // Distribución por categorías
+  const categorias = ['alta-tecnologia', 'soporte-vida', 'critico', 'general'];
+  const totalEquipos = equipos.length || 1; // Evitar división por cero
+  
+  categorias.forEach(categoria => {
+    const count = equipos.filter(e => e.categoria === categoria).length;
+    const porcentaje = (count / totalEquipos) * 100;
+    
+    document.getElementById(`count-${categoria}`).textContent = count;
+    document.getElementById(`bar-${categoria}`).style.width = `${porcentaje}%`;
+  });
+  
+  // Equipos que requieren atención
+  actualizarEquiposAtencion();
+  
+  // Actualizar también el dashboard gráfico
+  actualizarDashboardGrafico();
 }
-
-// Función para cerrar modal de clonado
-function cerrarModalClonado() {
-  const modal = document.getElementById('modal-clonar');
-  if (modal) {
-    modal.remove();
-  }
-}
-
-// ==============================================
-// FUNCIONES DE EDICIÓN
-// ==============================================
-
-// Función para editar equipo
-function editarEquipo(serie) {
-  const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
-  const equipo = equipos.find(e => e.serie === serie);
-  
-  if (!equipo) {
-    alert('Equipo no encontrado.');
-    return;
-  }
-  
-  // Llenar el formulario con los datos del equipo
-  document.getElementById("nombre").value = equipo.nombre || '';
-  document.getElementById("marca").value = equipo.marca || '';
-  document.getElementById("modelo").value = equipo.modelo || '';
-  document.getElementById("serie").value = equipo.serie || '';
-  document.getElementById("categoria").value = equipo.categoria || '';
-  document.getElementById("estado").value = equipo.estado || '';
-  document.getElementById("ubicacion").value = equipo.ubicacion || '';
-  document.getElementById("responsable").value = equipo.responsable || '';
-  document.getElementById("departamento").value = equipo.departamento || '';
-  document.getElementById("proveedor").value = equipo.proveedor || '';
-  document.getElementById("numero-contrato").value = equipo.contrato || '';
-  document.getElementById("fecha-compra").value = equipo.fechaCompra || '';
-  document.getElementById("fecha-garantia").value = equipo.fechaGarantia || '';
-  document.getElementById("costo").value = equipo.costo || '';
-  document.getElementById("imagen").value = equipo.imagen || '';
-  document.getElementById("manual").value = equipo.manual || '';
-  document.getElementById("observaciones").value = equipo.observaciones || '';
-  
-  // Marcar que estamos editando
-  form.dataset.editando = serie;
-  
-  // Cambiar el texto del botón
-  const submitBtn = form.querySelector('button[type="submit"]');
-  submitBtn.textContent = 'Actualizar Equipo';
-  
-  // Mostrar mensaje de edición
-  mostrarMensajeEdicion(equipo.nombre);
-  
-  // Scroll al formulario
-  document.getElementById('seccion-registro').scrollIntoView({ behavior: 'smooth' });
-}
-
-// Función para mostrar mensaje de edición
-function mostrarMensajeEdicion(nombreEquipo) {
-  const mensajeExistente = document.querySelector('.mensaje-edicion');
-  if (mensajeExistente) {
-    mensajeExistente.remove();
-  }
-  
-  const mensaje = document.createElement('div');
-  mensaje.className = 'mensaje-edicion';
-  mensaje.innerHTML = `
-    <div class="alerta-edicion">
-      <span>Editando equipo: <strong>${nombreEquipo}</strong></span>
-      <button type="button" class="btn-cancelar-edicion" onclick="cancelarEdicion()">Cancelar Edición</button>
-    </div>
-  `;
-  
-  form.parentNode.insertBefore(mensaje, form);
-}
-
-// Función para cancelar edición
-function cancelarEdicion() {
-  // Limpiar el formulario
-  form.reset();
-  
-  // Quitar el modo de edición
-  delete form.dataset.editando;
-  
-  // Restaurar el texto del botón
-  const submitBtn = form.querySelector('button[type="submit"]');
-  submitBtn.textContent = 'Registrar Equipo';
-  
-  // Quitar mensaje de edición
-  const mensaje = document.querySelector('.mensaje-edicion');
-  if (mensaje) {
-    mensaje.remove();
-  }
-}
-
-// ==============================================
-// FUNCIONES PLACEHOLDER PARA MÓDULOS AVANZADOS
-// ==============================================
 
 // Funciones básicas para verificación (placeholder)
 function inicializarModuloVerificacion() {

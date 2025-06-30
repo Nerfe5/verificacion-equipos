@@ -143,6 +143,137 @@
     </div>
   </div>
 
+  <!-- Dashboard Gráfico CSS -->
+  <div id="dashboard-graficos" class="dashboard-graficos">
+    <h2>📊 Dashboard Gráfico</h2>
+    
+    <!-- Gráficos principales -->
+    <div class="graficos-container">
+      
+      <!-- Gráfico de Estados (Barras CSS) -->
+      <div class="grafico-card">
+        <h3>📈 Distribución por Estados</h3>
+        <div class="grafico-barras-css">
+          <div class="barra-item">
+            <div class="barra-label">Operativo</div>
+            <div class="barra-container">
+              <div class="barra operativo" id="barra-operativo" data-count="0"></div>
+            </div>
+            <div class="barra-value" id="valor-operativo">0</div>
+          </div>
+          <div class="barra-item">
+            <div class="barra-label">Mantenimiento</div>
+            <div class="barra-container">
+              <div class="barra mantenimiento" id="barra-mantenimiento" data-count="0"></div>
+            </div>
+            <div class="barra-value" id="valor-mantenimiento">0</div>
+          </div>
+          <div class="barra-item">
+            <div class="barra-label">Fuera de Servicio</div>
+            <div class="barra-container">
+              <div class="barra fuera-servicio" id="barra-fuera-servicio" data-count="0"></div>
+            </div>
+            <div class="barra-value" id="valor-fuera-servicio">0</div>
+          </div>
+          <div class="barra-item">
+            <div class="barra-label">En Calibración</div>
+            <div class="barra-container">
+              <div class="barra en-calibracion" id="barra-en-calibracion" data-count="0"></div>
+            </div>
+            <div class="barra-value" id="valor-en-calibracion">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Indicador Circular de Operatividad -->
+      <div class="grafico-card">
+        <h3>🎯 Índice de Operatividad</h3>
+        <div class="indicador-circular">
+          <div class="circle-progress" id="circle-operatividad">
+            <div class="circle-progress-value" id="operatividad-percentage">0%</div>
+          </div>
+          <div class="circle-info">
+            <span id="equipos-operativos-texto">0 de 0 equipos operativos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico de Categorías (Barras horizontales) -->
+      <div class="grafico-card">
+        <h3>📋 Distribución por Categorías</h3>
+        <div class="grafico-categorias-css">
+          <div class="categoria-item">
+            <div class="categoria-label">Alta Tecnología</div>
+            <div class="categoria-barra-container">
+              <div class="categoria-barra alta-tecnologia" id="cat-barra-alta-tecnologia"></div>
+            </div>
+            <div class="categoria-value" id="cat-valor-alta-tecnologia">0</div>
+          </div>
+          <div class="categoria-item">
+            <div class="categoria-label">Soporte de Vida</div>
+            <div class="categoria-barra-container">
+              <div class="categoria-barra soporte-vida" id="cat-barra-soporte-vida"></div>
+            </div>
+            <div class="categoria-value" id="cat-valor-soporte-vida">0</div>
+          </div>
+          <div class="categoria-item">
+            <div class="categoria-label">Crítico</div>
+            <div class="categoria-barra-container">
+              <div class="categoria-barra critico" id="cat-barra-critico"></div>
+            </div>
+            <div class="categoria-value" id="cat-valor-critico">0</div>
+          </div>
+          <div class="categoria-item">
+            <div class="categoria-label">General</div>
+            <div class="categoria-barra-container">
+              <div class="categoria-barra general" id="cat-barra-general"></div>
+            </div>
+            <div class="categoria-value" id="cat-valor-general">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Métricas de Garantías -->
+      <div class="grafico-card">
+        <h3>⚠️ Estado de Garantías</h3>
+        <div class="metricas-garantias">
+          <div class="metrica-item garantia-vigente">
+            <div class="metrica-icon">✅</div>
+            <div class="metrica-info">
+              <span class="metrica-label">Vigentes</span>
+              <span class="metrica-valor" id="garantias-vigentes-count">0</span>
+            </div>
+          </div>
+          <div class="metrica-item garantia-por-vencer">
+            <div class="metrica-icon">⚠️</div>
+            <div class="metrica-info">
+              <span class="metrica-label">Por Vencer (30 días)</span>
+              <span class="metrica-valor" id="garantias-por-vencer-count">0</span>
+            </div>
+          </div>
+          <div class="metrica-item garantia-vencida">
+            <div class="metrica-icon">❌</div>
+            <div class="metrica-info">
+              <span class="metrica-label">Vencidas</span>
+              <span class="metrica-valor" id="garantias-vencidas-count">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Botones de acción del dashboard gráfico -->
+    <div class="dashboard-graficos-actions">
+      <button id="actualizar-graficos" class="btn-actualizar-graficos">
+        🔄 Actualizar Gráficos
+      </button>
+      <button id="exportar-dashboard-imagen" class="btn-exportar-dashboard">
+        📸 Exportar Dashboard
+      </button>
+    </div>
+  </div>
+
   <hr />
 
   <!-- Módulo de Verificación Diaria -->
