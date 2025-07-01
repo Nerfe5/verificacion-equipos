@@ -1,8 +1,26 @@
 // main.js
 
-// Variables globales
+// ==============================================
+// VARIABLES GLOBALES
+// ==============================================
 let equiposOriginales = [];
 let equiposFiltrados = [];
+
+// Variables para el sistema de alertas
+let alertasActivas = [];
+let configuracionAlertas = {
+  garantiaVencida: true,
+  garantiaPorVencer: true,
+  diasGarantiaAlerta: 30,
+  equiposCriticos: true,
+  verificacionesPendientes: true,
+  mantenimientoProlongado: true,
+  diasMantenimientoAlerta: 7,
+  soporteVida: true,
+  verificacionesNoConformes: true,
+  frecuenciaAlertas: 1800000 // 30 minutos por defecto
+};
+let intervalVerificacionAlertas = null;
 
 // Obtener referencias
 const form = document.getElementById("form-equipo");
@@ -112,11 +130,43 @@ window.onload = function () {
   document.getElementById('exportar-verificaciones').addEventListener('click', exportarVerificaciones);
   
   // Event listeners para el sistema de alertas
-  document.getElementById('marcar-todas-leidas').addEventListener('click', marcarTodasLeidasAlertas);
-  document.getElementById('configurar-alertas').addEventListener('click', abrirConfiguracionAlertas);
-  document.getElementById('limpiar-notificaciones').addEventListener('click', limpiarNotificaciones);
-  document.getElementById('guardar-configuracion').addEventListener('click', guardarConfiguracionAlertas);
-  document.getElementById('probar-alertas').addEventListener('click', probarAlertas);
+  const btnMarcarLeidas = document.getElementById('marcar-todas-leidas');
+  const btnConfigurarAlertas = document.getElementById('configurar-alertas');
+  const btnLimpiarNotificaciones = document.getElementById('limpiar-notificaciones');
+  const btnGuardarConfiguracion = document.getElementById('guardar-configuracion');
+  const btnProbarAlertas = document.getElementById('probar-alertas');
+  
+  if (btnMarcarLeidas) btnMarcarLeidas.addEventListener('click', marcarTodasLeidasAlertas);
+  if (btnConfigurarAlertas) btnConfigurarAlertas.addEventListener('click', abrirConfiguracionAlertas);
+  if (btnLimpiarNotificaciones) btnLimpiarNotificaciones.addEventListener('click', limpiarNotificaciones);
+  if (btnGuardarConfiguracion) btnGuardarConfiguracion.addEventListener('click', guardarConfiguracionAlertas);
+  if (btnProbarAlertas) btnProbarAlertas.addEventListener('click', probarAlertas);
+  
+  // Verificar que los botones fueron encontrados
+  console.log('Botones de alertas encontrados:', {
+    marcarLeidas: !!btnMarcarLeidas,
+    configurarAlertas: !!btnConfigurarAlertas,
+    limpiarNotificaciones: !!btnLimpiarNotificaciones,
+    guardarConfiguracion: !!btnGuardarConfiguracion,
+    probarAlertas: !!btnProbarAlertas
+  });
+  
+  // Event listener para cerrar modal with escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      cerrarConfiguracionAlertas();
+    }
+  });
+  
+  // Event listener para cerrar modal haciendo click fuera
+  document.getElementById('modal-configuracion-alertas')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+      cerrarConfiguracionAlertas();
+    }
+  });
+  
+  // Registrar inicialización del sistema
+  registrarEventoSistema('Sistema iniciado correctamente', 'Todos los módulos cargados');
 };
 
 // ==============================================
@@ -618,8 +668,8 @@ function actualizarIndicadorOperatividad(equipos) {
 // Función para actualizar gráfico de categorías
 function actualizarGraficoCategorias(equipos) {
   const categorias = {
-    'alta-tecnologia': 0,
-    'soporte-vida': 0,
+    'alta_tecnologia': 0,
+    'soporte_vida': 0,
     'critico': 0,
     'general': 0
   };
@@ -787,102 +837,399 @@ function actualizarDashboard() {
   actualizarDashboardGrafico();
 }
 
-// Funciones básicas para verificación (placeholder)
-function inicializarModuloVerificacion() {
-  console.log('Módulo de verificación inicializado');
-  cargarEquiposEnSelector();
+// ==============================================
+// FUNCIONES DE DEPURACIÓN Y PRUEBA
+// ==============================================
+
+// Función para verificar el estado del sistema de alertas
+function diagnosticarSistemaAlertas() {
+  console.log('🔍 DIAGNÓSTICO DEL SISTEMA DE ALERTAS');
+  console.log('=====================================');
+  
+  // Verificar elementos del DOM
+  const elementos = [
+    'configurar-alertas',
+    'modal-configuracion-alertas',
+    'marcar-todas-leidas',
+    'limpiar-notificaciones',
+    'lista-notificaciones',
+    'badge-total'
+  ];
+  
+  console.log('📋 Elementos del DOM:');
+  elementos.forEach(id => {
+    const elemento = document.getElementById(id);
+    console.log(`  ${id}: ${elemento ? '✅ Encontrado' : '❌ No encontrado'}`);
+  });
+  
+  // Verificar configuración
+  console.log('⚙️ Configuración actual:', configuracionAlertas);
+  
+  // Verificar alertas activas
+  console.log(`🔔 Alertas activas: ${alertasActivas.length}`);
+  
+  // Verificar event listeners (simulación)
+  console.log('👂 Probando event listeners...');
+  const btnConfiguracion = document.getElementById('configurar-alertas');
+  if (btnConfiguracion) {
+    console.log('  ✅ Botón configurar-alertas encontrado');
+    // Simular click
+    try {
+      abrirConfiguracionAlertas();
+      console.log('  ✅ Función abrirConfiguracionAlertas ejecutada');
+    } catch (error) {
+      console.log('  ❌ Error al ejecutar función:', error);
+    }
+  }
+  
+  console.log('=====================================');
 }
 
-function iniciarVerificacion() {
-  console.log('Iniciar verificación');
+// Función para probar manualmente el botón
+function probarBotonConfiguracion() {
+  console.log('🧪 Probando botón de configuración manualmente...');
+  
+  const boton = document.getElementById('configurar-alertas');
+  if (boton) {
+    console.log('✅ Botón encontrado, simulando click...');
+    boton.click();
+  } else {
+    console.error('❌ Botón no encontrado');
+  }
 }
 
-function guardarVerificacion() {
-  console.log('Guardar verificación');
+// Exportar funciones de depuración a la ventana global para acceso desde consola
+window.debugAlertas = {
+  diagnosticar: diagnosticarSistemaAlertas,
+  probarBoton: probarBotonConfiguracion,
+  abrirModal: abrirConfiguracionAlertas,
+  cerrarModal: cerrarConfiguracionAlertas
+};
+
+console.log('🛠️ Funciones de debug disponibles en window.debugAlertas');
+
+// ==============================================
+// FUNCIONES ADICIONALES PARA COMPLETAR EL SISTEMA
+// ==============================================
+
+// Función para registrar eventos del sistema
+function registrarEventoSistema(evento, detalles = '') {
+  const timestamp = new Date().toISOString();
+  registrarAccionSistema(`${evento}${detalles ? ': ' + detalles : ''}`, 'informativa');
+  console.log(`[${timestamp}] ${evento}${detalles ? ': ' + detalles : ''}`);
 }
 
-function cancelarVerificacion() {
-  console.log('Cancelar verificación');
+// Función para registrar acciones en el log del sistema
+function registrarAccionSistema(accion, tipo = 'informativa') {
+  const timestamp = new Date().toLocaleString();
+  const logContainer = document.getElementById('log-acciones');
+  
+  if (logContainer) {
+    const logEntry = document.createElement('div');
+    logEntry.className = `log-entry ${tipo}`;
+    logEntry.innerHTML = `
+      <span class="log-timestamp">${timestamp}</span>
+      <span class="log-message">${accion}</span>
+    `;
+    
+    // Agregar al inicio del log
+    logContainer.insertBefore(logEntry, logContainer.firstChild);
+    
+    // Mantener solo los últimos 20 logs
+    while (logContainer.children.length > 20) {
+      logContainer.removeChild(logContainer.lastChild);
+    }
+  }
+  
+  console.log(`[SISTEMA] ${accion}`);
 }
 
-function aplicarFiltrosHistorial() {
-  console.log('Aplicar filtros historial');
+// Función para mostrar notificaciones del sistema
+function mostrarNotificacionSistema(mensaje, tipo = 'info') {
+  console.log(`[NOTIFICACIÓN ${tipo.toUpperCase()}] ${mensaje}`);
+  
+  // También registrar en el log
+  registrarAccionSistema(mensaje, tipo);
+  
+  // Crear notificación visual (opcional)
+  const notificacion = document.createElement('div');
+  notificacion.className = `notificacion-sistema ${tipo}`;
+  notificacion.textContent = mensaje;
+  notificacion.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    color: white;
+    z-index: 10000;
+    font-weight: bold;
+    max-width: 300px;
+    word-wrap: break-word;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  `;
+  
+  // Colores según tipo
+  switch(tipo) {
+    case 'success':
+      notificacion.style.backgroundColor = '#28a745';
+      break;
+    case 'error':
+      notificacion.style.backgroundColor = '#dc3545';
+      break;
+    case 'warning':
+      notificacion.style.backgroundColor = '#ffc107';
+      notificacion.style.color = '#212529';
+      break;
+    default:
+      notificacion.style.backgroundColor = '#17a2b8';
+  }
+  
+  document.body.appendChild(notificacion);
+  
+  // Animar entrada
+  setTimeout(() => notificacion.style.opacity = '1', 100);
+  
+  // Remover después de 4 segundos
+  setTimeout(() => {
+    notificacion.style.opacity = '0';
+    setTimeout(() => {
+      if (notificacion.parentNode) {
+        notificacion.parentNode.removeChild(notificacion);
+      }
+    }, 300);
+  }, 4000);
 }
 
-function exportarVerificaciones() {
-  console.log('Exportar verificaciones');
-}
+// ==============================================
+// SISTEMA DE NOTIFICACIONES Y ALERTAS - FUNCIONES PRINCIPALES
+// ==============================================
 
-// Funciones básicas para sistema de alertas (placeholder)
+// Función para inicializar el sistema de alertas
 function inicializarSistemaAlertas() {
-  console.log('Sistema de alertas inicializado');
+  console.log('🔔 Inicializando sistema de alertas...');
+  
+  // Cargar configuración guardada
+  cargarConfiguracionAlertas();
+  
+  // Verificar alertas inmediatamente
+  verificarAlertas();
+  
+  // Configurar verificación automática
+  configurarVerificacionAutomatica();
+  
+  // Actualizar interfaz
+  actualizarPanelNotificaciones();
+  actualizarResumenAlertas();
+  
+  console.log('✅ Sistema de alertas inicializado correctamente');
 }
 
-function marcarTodasLeidasAlertas() {
-  console.log('Marcar todas como leídas');
+// Función para cargar configuración desde localStorage
+function cargarConfiguracionAlertas() {
+  const configGuardada = localStorage.getItem('configuracionAlertas');
+  if (configGuardada) {
+    configuracionAlertas = { ...configuracionAlertas, ...JSON.parse(configGuardada) };
+  }
+  
+  const alertasGuardadas = localStorage.getItem('alertasActivas');
+  if (alertasGuardadas) {
+    alertasActivas = JSON.parse(alertasGuardadas);
+  }
 }
 
+// Función para abrir modal de configuración
 function abrirConfiguracionAlertas() {
-  console.log('Abrir configuración de alertas');
+  console.log('🔧 Abriendo modal de configuración de alertas...');
+  
+  const modal = document.getElementById('modal-configuracion-alertas');
+  
+  if (!modal) {
+    console.error('❌ Modal de configuración no encontrado en el DOM');
+    mostrarNotificacionSistema('❌ Error: Modal de configuración no encontrado', 'error');
+    return;
+  }
+  
+  console.log('✅ Modal encontrado, configurando valores...');
+  
+  try {
+    // Cargar valores actuales en el modal
+    const elementos = {
+      'alerta-garantia-vencida': configuracionAlertas.garantiaVencida,
+      'alerta-garantia-por-vencer': configuracionAlertas.garantiaPorVencer,
+      'dias-garantia-alerta': configuracionAlertas.diasGarantiaAlerta,
+      'alerta-equipos-criticos': configuracionAlertas.equiposCriticos,
+      'alerta-verificaciones-pendientes': configuracionAlertas.verificacionesPendientes,
+      'alerta-mantenimiento-prolongado': configuracionAlertas.mantenimientoProlongado,
+      'dias-mantenimiento-alerta': configuracionAlertas.diasMantenimientoAlerta,
+      'alerta-soporte-vida': configuracionAlertas.soporteVida,
+      'alerta-verificaciones-no-conformes': configuracionAlertas.verificacionesNoConformes,
+      'frecuencia-alertas': configuracionAlertas.frecuenciaAlertas
+    };
+    
+    // Aplicar valores a los elementos del formulario
+    Object.keys(elementos).forEach(id => {
+      const elemento = document.getElementById(id);
+      if (elemento) {
+        if (elemento.type === 'checkbox') {
+          elemento.checked = elementos[id];
+        } else {
+          elemento.value = elementos[id];
+        }
+        console.log(`✅ ${id}: configurado`);
+      } else {
+        console.warn(`⚠️ Elemento ${id} no encontrado`);
+      }
+    });
+    
+    // Mostrar modal con animación
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+    
+    // Asegurar que la animación se ejecute
+    setTimeout(() => {
+      modal.style.opacity = '1';
+    }, 10);
+    
+    console.log('✅ Modal de configuración abierto correctamente');
+    registrarEventoSistema('Modal de configuración de alertas abierto');
+    
+  } catch (error) {
+    console.error('❌ Error al abrir modal:', error);
+    mostrarNotificacionSistema('❌ Error al abrir la configuración: ' + error.message, 'error');
+  }
 }
 
-function limpiarNotificaciones() {
-  console.log('Limpiar notificaciones');
-}
-
-function guardarConfiguracionAlertas() {
-  console.log('Guardar configuración de alertas');
-}
-
-function probarAlertas() {
-  console.log('Probar alertas');
-}
-
+// Función para cerrar modal de configuración
 function cerrarConfiguracionAlertas() {
   const modal = document.getElementById('modal-configuracion-alertas');
   if (modal) {
-    modal.style.display = 'none';
+    // Animación de cierre
+    modal.style.opacity = '0';
+    modal.classList.remove('show');
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 300);
+    
+    registrarEventoSistema('Modal de configuración de alertas cerrado');
+    console.log('🔒 Modal de configuración cerrado');
   }
 }
 
-function registrarAccionSistema(descripcion, tipo = 'informativa') {
-  console.log(`Acción registrada: ${descripcion} (${tipo})`);
-}
-
-// Funciones básicas para dashboard
-function generarReporteDashboard() {
-  alert('Función de reporte en desarrollo. Los datos se mostrarían en un reporte detallado.');
-}
-
-// ==============================================
-// FUNCIÓN PARA LIMPIAR DATOS PROBLEMÁTICOS
-// ==============================================
-
-// Función para limpiar comillas de números de serie
-function limpiarNumerosSerieProblematicos() {
-  const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
-  let equiposModificados = false;
-  
-  equipos.forEach(equipo => {
-    if (equipo.serie.includes('"') || equipo.serie.includes("'")) {
-      // Remover comillas del número de serie
-      equipo.serie = equipo.serie.replace(/['"]/g, '');
-      equiposModificados = true;
-      console.log(`Serie limpiada: ${equipo.serie} para equipo ${equipo.nombre}`);
-    }
-  });
-  
-  if (equiposModificados) {
-    localStorage.setItem("equiposMedicos", JSON.stringify(equipos));
-    cargarEquipos();
-    actualizarDashboard();
-    cargarEquiposEnSelector();
-    alert('Se han limpiado los números de serie problemáticos. Los botones ahora deberían funcionar correctamente.');
-  } else {
-    alert('No se encontraron números de serie con comillas.');
+// Función para guardar configuración
+function guardarConfiguracionAlertas() {
+  try {
+    console.log('💾 Guardando configuración de alertas...');
+    
+    // Obtener valores del modal de configuración con validación
+    const obtenerValor = (id, tipo, valorPorDefecto) => {
+      const elemento = document.getElementById(id);
+      if (!elemento) return valorPorDefecto;
+      
+      if (tipo === 'checkbox') return elemento.checked;
+      if (tipo === 'number') return parseInt(elemento.value) || valorPorDefecto;
+      return elemento.value || valorPorDefecto;
+    };
+    
+    configuracionAlertas = {
+      garantiaVencida: obtenerValor('alerta-garantia-vencida', 'checkbox', true),
+      garantiaPorVencer: obtenerValor('alerta-garantia-por-vencer', 'checkbox', true),
+      diasGarantiaAlerta: obtenerValor('dias-garantia-alerta', 'number', 30),
+      equiposCriticos: obtenerValor('alerta-equipos-criticos', 'checkbox', true),
+      verificacionesPendientes: obtenerValor('alerta-verificaciones-pendientes', 'checkbox', true),
+      mantenimientoProlongado: obtenerValor('alerta-mantenimiento-prolongado', 'checkbox', true),
+      diasMantenimientoAlerta: obtenerValor('dias-mantenimiento-alerta', 'number', 7),
+      soporteVida: obtenerValor('alerta-soporte-vida', 'checkbox', true),
+      verificacionesNoConformes: obtenerValor('alerta-verificaciones-no-conformes', 'checkbox', true),
+      frecuenciaAlertas: obtenerValor('frecuencia-alertas', 'number', 1800000)
+    };
+    
+    // Guardar en localStorage
+    localStorage.setItem('configuracionAlertas', JSON.stringify(configuracionAlertas));
+    
+    // Reconfigurar verificación automática
+    configurarVerificacionAutomatica();
+    
+    // Verificar alertas inmediatamente con la nueva configuración
+    verificarAlertas();
+    
+    // Cerrar modal
+    cerrarConfiguracionAlertas();
+    
+    // Mostrar mensaje de éxito
+    mostrarNotificacionSistema('✅ Configuración de alertas guardada correctamente', 'success');
+    registrarEventoSistema('Configuración de alertas actualizada', JSON.stringify(configuracionAlertas));
+    
+    console.log('✅ Configuración guardada:', configuracionAlertas);
+  } catch (error) {
+    console.error('❌ Error al guardar configuración:', error);
+    mostrarNotificacionSistema('❌ Error al guardar la configuración: ' + error.message, 'error');
   }
 }
 
-// ==============================================
-// FUNCIONES BÁSICAS PARA MANEJO DE EQUIPOS
-// ==============================================
+// Función para probar el sistema de alertas
+function probarAlertas() {
+  console.log('🧪 Probando sistema de alertas...');
+  
+  try {
+    // Mostrar notificación de inicio de prueba
+    mostrarNotificacionSistema('🧪 Iniciando prueba del sistema de alertas...', 'info');
+    
+    // Simular algunas alertas de prueba
+    const alertasPrueba = [
+      {
+        id: 'test-' + Date.now(),
+        tipo: 'critica',
+        mensaje: '🚨 PRUEBA: Equipo crítico simulado fuera de servicio',
+        timestamp: new Date().toISOString(),
+        leida: false,
+        equipo: 'Equipo de Prueba',
+        categoria: 'test'
+      },
+      {
+        id: 'test-' + (Date.now() + 1),
+        tipo: 'advertencia',
+        mensaje: '⚠️ PRUEBA: Garantía por vencer simulada',
+        timestamp: new Date().toISOString(),
+        leida: false,
+        equipo: 'Equipo Test 2',
+        categoria: 'test'
+      },
+      {
+        id: 'test-' + (Date.now() + 2),
+        tipo: 'informativa',
+        mensaje: 'ℹ️ PRUEBA: Notificación informativa de prueba',
+        timestamp: new Date().toISOString(),
+        leida: false,
+        equipo: 'Sistema',
+        categoria: 'test'
+      }
+    ];
+    
+    // Agregar alertas de prueba
+    alertasPrueba.forEach(alerta => alertasActivas.push(alerta));
+    
+    // Actualizar interfaz
+    actualizarPanelNotificaciones();
+    actualizarResumenAlertas();
+    
+    // Registrar evento
+    registrarEventoSistema('Sistema de alertas probado', `${alertasPrueba.length} alertas de prueba generadas`);
+    
+    // Mostrar resultado
+    mostrarNotificacionSistema(`✅ Prueba completada: ${alertasPrueba.length} alertas de prueba generadas`, 'success');
+    
+    console.log('✅ Prueba del sistema de alertas completada');
+    console.log('📋 Alertas de prueba generadas:', alertasPrueba);
+    
+    // Información para el usuario
+    setTimeout(() => {
+      mostrarNotificacionSistema('💡 Las alertas de prueba se pueden eliminar con "Limpiar Notificaciones"', 'info');
+    }, 2000);
+    
+  } catch (error) {
+    console.error('❌ Error al probar alertas:', error);
+    mostrarNotificacionSistema('❌ Error al probar el sistema: ' + error.message, 'error');
+  }
+}

@@ -1012,7 +1012,6 @@ tr:hover {
   align-items: center;
   margin-bottom: 1rem;
   flex-wrap: wrap;
-  gap: 1rem;
 }
 
 .controles-notificaciones {
@@ -1078,445 +1077,306 @@ tr:hover {
 .lista-notificaciones {
   max-height: 400px;
   overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: white;
+}
+
+.sin-notificaciones {
+  padding: 2rem;
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
 }
 
 .notificacion-item {
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
-  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
   transition: all 0.3s ease;
 }
 
 .notificacion-item:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.notificacion-item.critica {
-  border-left: 4px solid #dc3545;
-  background: #fff5f5;
-}
-
-.notificacion-item.advertencia {
-  border-left: 4px solid #ffc107;
-  background: #fffbf0;
-}
-
-.notificacion-item.informativa {
-  border-left: 4px solid #17a2b8;
-  background: #f0f9ff;
-}
-
-.notificacion-item.mantenimiento {
-  border-left: 4px solid #6c757d;
   background: #f8f9fa;
 }
 
-.notificacion-item.leida {
-  opacity: 0.7;
+.notificacion-item.no-leida {
+  background: linear-gradient(90deg, #fff3cd 0%, #ffffff 10%);
+  border-left: 4px solid #ffc107;
 }
 
-.notificacion-content {
-  padding: 1rem;
+.notificacion-item.critica {
+  border-left-color: #dc3545;
 }
 
-.notificacion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
+.notificacion-item.critica.no-leida {
+  background: linear-gradient(90deg, #f8d7da 0%, #ffffff 10%);
+}
+
+.notificacion-icono {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  margin-top: 0.25rem;
+}
+
+.notificacion-contenido {
+  flex: 1;
 }
 
 .notificacion-titulo {
   font-weight: bold;
   color: #2c3e50;
+  margin-bottom: 0.25rem;
 }
 
-.notificacion-tiempo {
-  font-size: 0.8rem;
+.notificacion-descripcion {
+  color: #5a6c7d;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.notificacion-fecha {
+  font-size: 0.85rem;
   color: #6c757d;
-}
-
-.notificacion-mensaje {
-  color: #495057;
-  margin-bottom: 1rem;
-  line-height: 1.5;
 }
 
 .notificacion-acciones {
   display: flex;
   gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.btn-accion-principal {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: background 0.3s ease;
-}
-
-.btn-accion-principal:hover {
-  background: #0056b3;
+  margin-left: 1rem;
 }
 
 .btn-marcar-leida,
-.btn-descartar {
-  background: #f8f9fa;
-  color: #495057;
+.btn-eliminar-alerta {
+  background: none;
   border: 1px solid #dee2e6;
-  padding: 0.4rem 0.8rem;
+  padding: 0.25rem 0.5rem;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   transition: all 0.3s ease;
 }
 
-.btn-marcar-leida:hover,
-.btn-descartar:hover {
-  background: #e9ecef;
-}
-
-.sin-notificaciones {
-  text-align: center;
-  color: #6c757d;
-  padding: 2rem;
-  font-style: italic;
-}
-
-/* Modal de Configuración */
-.modal-configuracion {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-configuracion .modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 800px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.config-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.config-grupo {
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 6px;
-  border: 1px solid #dee2e6;
-}
-
-.config-grupo h4 {
-  margin-bottom: 1rem;
-  color: #2c3e50;
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 0.5rem;
-}
-
-.config-grupo label {
-  display: block;
-  margin-bottom: 0.8rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.config-grupo input[type="checkbox"] {
-  margin-right: 0.5rem;
-  transform: scale(1.2);
-}
-
-.config-grupo select {
-  margin-left: 0.5rem;
-  padding: 0.25rem;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-}
-
-.acciones-configuracion {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-}
-
-.btn-guardar-config,
-.btn-probar {
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.btn-guardar-config {
+.btn-marcar-leida:hover {
   background: #28a745;
   color: white;
+  border-color: #28a745;
 }
 
-.btn-guardar-config:hover {
-  background: #218838;
-}
-
-.btn-probar {
-  background: #17a2b8;
+.btn-eliminar-alerta:hover {
+  background: #dc3545;
   color: white;
-}
-
-.btn-probar:hover {
-  background: #138496;
-}
-
-/* Resumen de Alertas */
-.resumen-alertas {
-  background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.alertas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.alerta-tipo {
-  background: #f8f9fa;
-  border-radius: 6px;
-  padding: 1rem;
-  text-align: center;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-}
-
-.alerta-tipo:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.alerta-tipo.critica {
   border-color: #dc3545;
-  background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
 }
 
-.alerta-tipo.advertencia {
-  border-color: #ffc107;
-  background: linear-gradient(135deg, #fffbf0 0%, #fff3cd 100%);
-}
-
-.alerta-tipo.informativa {
-  border-color: #17a2b8;
-  background: linear-gradient(135deg, #f0f9ff 0%, #d1ecf1 100%);
-}
-
-.alerta-tipo.mantenimiento {
-  border-color: #6c757d;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-}
-
-.alerta-icono {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.alerta-count {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-.alerta-label {
-  font-size: 0.9rem;
-  color: #6c757d;
-  font-weight: 500;
-}
-
-/* Log de Acciones */
+/* Estilos para Log de Acciones */
 .acciones-sistema {
   background: white;
   border-radius: 8px;
   padding: 1.5rem;
+  margin-bottom: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .log-acciones {
   max-height: 300px;
   overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: #f8f9fa;
+}
+
+.sin-acciones {
+  padding: 2rem;
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
 }
 
 .accion-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem;
-  border-bottom: 1px solid #dee2e6;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e9ecef;
   transition: background 0.3s ease;
 }
 
 .accion-item:hover {
-  background: #f8f9fa;
+  background: white;
 }
 
 .accion-item:last-child {
   border-bottom: none;
 }
 
-.accion-tiempo {
+.accion-fecha {
   font-size: 0.8rem;
   color: #6c757d;
-  white-space: nowrap;
+  margin-bottom: 0.25rem;
 }
 
 .accion-descripcion {
-  flex-grow: 1;
-  margin-left: 1rem;
-  color: #495057;
+  color: #2c3e50;
+  line-height: 1.4;
 }
 
-.accion-item.critica .accion-descripcion {
-  color: #dc3545;
-  font-weight: bold;
+.accion-item.informativa {
+  border-left: 3px solid #17a2b8;
 }
 
-.accion-item.advertencia .accion-descripcion {
-  color: #ffc107;
-  font-weight: 500;
+.accion-item.advertencia {
+  border-left: 3px solid #ffc107;
 }
 
-.accion-item.informativa .accion-descripcion {
-  color: #17a2b8;
+.accion-item.critica {
+  border-left: 3px solid #dc3545;
 }
 
-.sin-acciones {
-  text-align: center;
-  color: #6c757d;
-  padding: 2rem;
-  font-style: italic;
+/* Mejoras para el Panel de Alertas */
+.panel-alertas {
+  animation: slideInRight 0.3s ease-out;
 }
 
-/* Estilos específicos para el modal de clonado */
-.info-equipo-original {
-  background-color: #e8f4fd;
-  border: 2px solid #007bff;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 20px;
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
-.info-equipo-original h3 {
-  color: #007bff;
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 1.1em;
+.panel-alertas h3 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 0.5rem;
 }
 
-.datos-equipo-original {
-  background-color: white;
-  padding: 10px;
-  border-radius: 4px;
-  font-family: monospace;
-  border-left: 4px solid #007bff;
-}
-
-.campo-clonado {
-  margin-bottom: 15px;
-}
-
-.campo-clonado label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #333;
-}
-
-.campo-clonado input {
-  width: 100%;
-  padding: 10px;
-  border: 2px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
-}
-
-.campo-clonado input:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-}
-
-.campo-clonado.opcional label {
-  color: #666;
-  font-style: italic;
-}
-
-.campo-clonado small {
-  display: block;
-  color: #666;
-  font-size: 12px;
-  margin-top: 5px;
-  font-style: italic;
-}
-
-.acciones-clonado {
+/* Botones del Panel de Alertas */
+.acciones-alertas {
   display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid #eee;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
-.btn-confirmar-clonar {
-  background-color: #28a745;
-  color: white;
+.acciones-alertas button {
+  padding: 0.5rem 1rem;
   border: none;
-  padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
 }
 
-.btn-confirmar-clonar:hover {
-  background-color: #218838;
+.acciones-alertas button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.btn-cancelar-clonar {
-  background-color: #6c757d;
+/* Badge de notificaciones */
+.badge-notificaciones {
+  position: relative;
+  display: inline-block;
+}
+
+.badge-total {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #dc3545;
   color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
+  border-radius: 50%;
+  padding: 0.25rem;
+  font-size: 0.75rem;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  animation: pulse 2s infinite;
 }
 
-.btn-cancelar-clonar:hover {
-  background-color: #5a6268;
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive para el sistema de alertas */
+@media (max-width: 768px) {
+  .config-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .alertas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .notificacion-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .notificacion-acciones {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+  
+  .acciones-alertas {
+    flex-direction: column;
+  }
+  
+  .modal-configuracion .modal-content {
+    width: 95%;
+    padding: 1rem;
+  }
+}
+
+/* Indicador de estado de alertas */
+.estado-alertas {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.estado-alertas.activo {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.estado-alertas.inactivo {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.estado-alertas::before {
+  content: "●";
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0.3;
+  }
 }
 
 /* ==============================================
@@ -1931,3 +1791,125 @@ tr:hover {
 .grafico-card:nth-child(2) { animation-delay: 0.2s; }
 .grafico-card:nth-child(3) { animation-delay: 0.3s; }
 .grafico-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Modal de Configuración de Alertas */
+.modal-configuracion {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-configuracion.show {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-configuracion .modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-configuracion .close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6c757d;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-configuracion .close:hover {
+  background: #f8f9fa;
+  color: #dc3545;
+}
+
+/* Botones de control de alertas */
+.btn-configurar,
+.btn-marcar-leidas,
+.btn-limpiar {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  margin: 0 0.25rem;
+}
+
+.btn-configurar {
+  background: #007bff;
+  color: white;
+}
+
+.btn-configurar:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.btn-marcar-leidas {
+  background: #28a745;
+  color: white;
+}
+
+.btn-marcar-leidas:hover {
+  background: #1e7e34;
+  transform: translateY(-1px);
+}
+
+.btn-limpiar {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-limpiar:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+/* Header de notificaciones */
+.header-notificaciones {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.controles-notificaciones {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.contador-notificaciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
