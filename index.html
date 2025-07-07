@@ -619,12 +619,22 @@
       <textarea id="observaciones" rows="3" placeholder="Observaciones adicionales..."></textarea>
     </fieldset>
 
-    <button type="submit">Registrar Equipo</button>
+    <div class="form-actions">
+      <button type="submit" id="btn-submit">Registrar Equipo</button>
+      <button type="button" id="btn-cancelar" class="btn-cancelar" style="display:none;">Cancelar</button>
+    </div>
   </form>
 
   <hr />
 
   <h2>Equipos Registrados</h2>
+  
+  <!-- Botones de Utilidad -->
+  <div class="botones-utilidad" style="margin-bottom: 20px; text-align: center;">
+    <button id="cargarDatosPrueba" style="margin: 5px; padding: 10px 20px; background-color: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer;">📋 Cargar Datos de Prueba</button>
+    <button id="limpiarSeries" style="margin: 5px; padding: 10px 20px; background-color: #ffc107; color: #212529; border: none; border-radius: 4px; cursor: pointer;">🧹 Limpiar Series</button>
+    <button id="limpiarDatos" style="margin: 5px; padding: 10px 20px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">🗑️ Limpiar Todos los Datos</button>
+  </div>
   
   <!-- Panel de Filtros y Búsqueda -->
   <div class="panel-filtros">
@@ -702,10 +712,10 @@
   </table>
 
   <!-- Scripts -->
-  <!-- main.js debe ir primero ya que contiene las funciones principales -->
+  <!-- Solo main.js - versión limpia -->
   <script src="main.js"></script>
   
-  <!-- Scripts de utilidades -->
+  <!-- Script de datos de prueba -->
   <script src="agregar_datos_prueba.js"></script>
 </body>
 </html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diagnóstico Rápido</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .resultado { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .error { background-color: #ffebee; }
+        .success { background-color: #e8f5e8; }
+        button { margin: 5px; padding: 8px 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Diagnóstico Rápido de Funciones</h1>
+    
+    <button onclick="verificarFunciones()">Verificar Funciones</button>
+    <button onclick="probarRegistroManual()">Probar Registro Manual</button>
+    <button onclick="mostrarLocalStorage()">Mostrar localStorage</button>
+    <button onclick="limpiarLocalStorage()">Limpiar localStorage</button>
+    
+    <div id="resultados"></div>
+    
+    <script>
+        function log(mensaje, tipo = 'info') {
+            const div = document.getElementById('resultados');
+            const clase = tipo === 'error' ? 'error' : tipo === 'success' ? 'success' : '';
+            div.innerHTML += `<div class="resultado ${clase}">[${new Date().toLocaleTimeString()}] ${mensaje}</div>`;
+        }
+        
+        function verificarFunciones() {
+            log('🔍 Verificando funciones principales...');
+            
+            const funciones = [
+                'manejarSubmitEquipo',
+                'agregarEquipo', 
+                'cargarEquipos',
+                'actualizarDashboard',
+                'cargarDatosPrueba',
+                'limpiarTodosLosDatos'
+            ];
+            
+            funciones.forEach(nombre => {
+                if (typeof window[nombre] === 'function') {
+                    log(`✅ ${nombre}: EXISTE`, 'success');
+                } else {
+                    log(`❌ ${nombre}: NO EXISTE`, 'error');
+                }
+            });
+            
+            // Verificar elementos del DOM
+            const elementos = ['form-equipo', 'tabla-equipos', 'cargarDatosPrueba', 'limpiarDatos'];
+            elementos.forEach(id => {
+                const elemento = document.getElementById(id);
+                if (elemento) {
+                    log(`✅ Elemento ${id}: EXISTE`, 'success');
+                } else {
+                    log(`❌ Elemento ${id}: NO EXISTE`, 'error');
+                }
+            });
+        }
+        
+        function probarRegistroManual() {
+            log('🧪 Probando registro manual directo...');
+            
+            const equipoPrueba = {
+                nombre: 'Equipo Test Manual',
+                marca: 'Test Brand',
+                modelo: 'Test Model', 
+                serie: 'MANUAL-' + Date.now(),
+                categoria: 'general',
+                estado: 'operativo',
+                ubicacion: 'Sala Test',
+                responsable: 'Test User',
+                departamento: 'Test Dept',
+                proveedor: 'Test Provider',
+                contrato: 'CT-TEST-001',
+                fechaCompra: '2024-01-01',
+                fechaGarantia: '2026-01-01',
+                costo: '1000',
+                imagen: '',
+                manual: '',
+                observaciones: 'Equipo de prueba manual',
+                fechaRegistro: new Date().toISOString(),
+                ultimaActualizacion: new Date().toISOString()
+            };
+            
+            try {
+                // Guardar directamente en localStorage
+                const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+                equipos.push(equipoPrueba);
+                localStorage.setItem("equiposMedicos", JSON.stringify(equipos));
+                
+                log(`✅ Equipo guardado con serie: ${equipoPrueba.serie}`, 'success');
+                log(`📊 Total equipos en localStorage: ${equipos.length}`, 'success');
+                
+                // Verificar que se guardó
+                const verificacion = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+                const encontrado = verificacion.find(e => e.serie === equipoPrueba.serie);
+                
+                if (encontrado) {
+                    log('✅ VERIFICADO: Equipo encontrado en localStorage', 'success');
+                } else {
+                    log('❌ ERROR: Equipo NO encontrado tras guardar', 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ ERROR en registro: ${error.message}`, 'error');
+            }
+        }
+        
+        function mostrarLocalStorage() {
+            log('📊 Estado actual de localStorage...');
+            
+            try {
+                const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+                log(`📈 Total equipos: ${equipos.length}`, 'success');
+                
+                if (equipos.length > 0) {
+                    equipos.forEach((equipo, index) => {
+                        log(`   ${index + 1}. ${equipo.nombre} (${equipo.serie})`, 'info');
+                    });
+                } else {
+                    log('ℹ️ No hay equipos en localStorage', 'info');
+                }
+                
+            } catch (error) {
+                log(`❌ ERROR leyendo localStorage: ${error.message}`, 'error');
+            }
+        }
+        
+        function limpiarLocalStorage() {
+            if (confirm('¿Limpiar localStorage?')) {
+                localStorage.removeItem('equiposMedicos');
+                log('🧹 localStorage limpiado', 'success');
+            }
+        }
+        
+        // Ejecutar verificación inicial
+        window.onload = function() {
+            log('🚀 Diagnóstico iniciado');
+            verificarFunciones();
+        };
+    </script>
+</body>
+</html>

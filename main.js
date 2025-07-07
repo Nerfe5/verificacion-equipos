@@ -25,37 +25,15 @@ let intervalVerificacionAlertas = null;
 // Obtener referencias
 const form = document.getElementById("form-equipo");
 const tabla = document.getElementById("tabla-equipos").querySelector("tbody");
-const inputCSV = document.createElement("input");
-inputCSV.type = "file";
-inputCSV.accept = ".csv";
 
-document.body.insertAdjacentHTML("beforeend", '<button id="importarCSV">Importar desde CSV</button>');
-document.body.insertAdjacentHTML("beforeend", '<button id="limpiarSeries" style="margin-left: 10px; background-color: #ffc107; color: #212529;">🧹 Limpiar Series</button>');
-document.body.insertAdjacentHTML("beforeend", '<button id="cargarDatosPrueba" style="margin-left: 10px; background-color: #17a2b8; color: white;">📋 Cargar Datos de Prueba</button>');
-document.body.insertAdjacentHTML("beforeend", '<button id="limpiarDatos" style="margin-left: 10px; background-color: #dc3545; color: white;">🗑️ Limpiar Todos los Datos</button>');
-document.getElementById("importarCSV").addEventListener("click", () => inputCSV.click());
-document.getElementById("limpiarSeries").addEventListener("click", limpiarNumerosSerieProblematicos);
-document.getElementById("cargarDatosPrueba").addEventListener("click", () => {
-  if (typeof cargarDatosPrueba === 'function') {
-    cargarDatosPrueba();
-  } else {
-    alert('La función cargarDatosPrueba no está disponible. Asegúrate de que el archivo agregar_datos_prueba.js esté cargado.');
-  }
-});
-document.getElementById("limpiarDatos").addEventListener("click", () => {
-  if (typeof limpiarTodosLosDatos === 'function') {
-    limpiarTodosLosDatos();
-  } else {
-    if (confirm('¿Estás seguro de que deseas eliminar TODOS los datos? Esta acción no se puede deshacer.')) {
-      localStorage.setItem('equiposMedicos', '[]');
-      cargarEquipos();
-      actualizarDashboard();
-      cargarEquiposEnSelector();
-      alert('Todos los datos han sido eliminados.');
-    }
-  }
-});
-inputCSV.addEventListener("change", handleCSV);
+// Función para inicializar módulo de verificación diaria (stub)
+function inicializarModuloVerificacion() {
+  // Cargar selector de equipos para verificación
+  cargarEquiposEnSelector();
+  // Ocultar formulario de verificación al iniciar
+  const formulario = document.getElementById('formulario-verificacion');
+  if (formulario) formulario.style.display = 'none';
+}
 
 // ========================================
 // INICIALIZACIÓN DE LA APLICACIÓN
@@ -106,6 +84,41 @@ window.onload = function () {
   
   // Event listeners para el formulario de registro de equipos
   form.addEventListener("submit", manejarSubmitEquipo);
+  
+  // Event listener para el botón de cancelar
+  const btnCancelar = document.getElementById('btn-cancelar');
+  if (btnCancelar) {
+    btnCancelar.addEventListener('click', cancelarEdicion);
+  }
+  
+  // Event listeners para botones de utilidad
+  const btnCargarDatos = document.getElementById('cargarDatosPrueba');
+  const btnLimpiarSeries = document.getElementById('limpiarSeries');
+  const btnLimpiarDatos = document.getElementById('limpiarDatos');
+  
+  if (btnCargarDatos) {
+    btnCargarDatos.addEventListener('click', () => {
+      if (typeof cargarDatosPrueba === 'function') {
+        cargarDatosPrueba();
+      } else {
+        alert('La función cargarDatosPrueba no está disponible. Asegúrate de que el archivo agregar_datos_prueba.js esté cargado.');
+      }
+    });
+  }
+  
+  if (btnLimpiarSeries) {
+    btnLimpiarSeries.addEventListener('click', limpiarNumerosSerieProblematicos);
+  }
+  
+  if (btnLimpiarDatos) {
+    btnLimpiarDatos.addEventListener('click', limpiarTodosLosDatos);
+  }
+  
+  // ========================================
+  // EVENT LISTENER DEL FORMULARIO PRINCIPAL
+  // ========================================
+  // CRÍTICO: Sin esto no funciona el registro manual
+  form.addEventListener('submit', manejarSubmitEquipo);
   
   // Event listeners para filtros
   document.getElementById('buscar-texto').addEventListener('input', aplicarFiltros);
@@ -435,12 +448,289 @@ function mostrarModalDetalles(equipo) {
   document.body.appendChild(modal);
 }
 
-// Función para cerrar modal
-function cerrarModal() {
-  const modal = document.querySelector('.modal');
-  if (modal) {
-    modal.remove();
+// Función para editar equipo
+function editarEquipo(serie) {
+  const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+  const equipo = equipos.find(e => e.serie === serie);
+  
+  if (!equipo) {
+    alert('Equipo no encontrado.');
+    return;
   }
+  
+  // Confirmar acción
+  if (!confirm(`¿Deseas editar el equipo "${equipo.nombre}" (${equipo.serie})?`)) {
+    return;
+  }
+  
+  // Llenar el formulario con los datos del equipo
+  document.getElementById("nombre").value = equipo.nombre || '';
+  document.getElementById("marca").value = equipo.marca || '';
+  document.getElementById("modelo").value = equipo.modelo || '';
+  document.getElementById("serie").value = equipo.serie || '';
+  document.getElementById("categoria").value = equipo.categoria || 'general';
+  document.getElementById("estado").value = equipo.estado || 'operativo';
+  document.getElementById("ubicacion").value = equipo.ubicacion || '';
+  document.getElementById("responsable").value = equipo.responsable || '';
+  document.getElementById("departamento").value = equipo.departamento || '';
+  document.getElementById("proveedor").value = equipo.proveedor || '';
+  document.getElementById("numero-contrato").value = equipo.contrato || '';
+  document.getElementById("fecha-compra").value = equipo.fechaCompra || '';
+  document.getElementById("fecha-garantia").value = equipo.fechaGarantia || '';
+  document.getElementById("costo").value = equipo.costo || '';
+  document.getElementById("imagen").value = equipo.imagen || '';
+  document.getElementById("manual").value = equipo.manual || '';
+  document.getElementById("observaciones").value = equipo.observaciones || '';
+  
+  // Activar modo edición
+  activarModoEdicion(serie, 'Actualizar Equipo');
+  
+  // Hacer scroll al formulario
+  form.scrollIntoView({ behavior: 'smooth' });
+  
+  // Mostrar mensaje de modo edición
+  mostrarMensajeEdicion(`Modo edición activado para "${equipo.nombre}". Modifica los datos y presiona "Actualizar Equipo" o "Cancelar".`);
+}
+
+// Función para clonar equipo
+function clonarEquipo(serie) {
+  const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+  const equipo = equipos.find(e => e.serie === serie);
+  
+  if (!equipo) {
+    alert('Equipo no encontrado.');
+    return;
+  }
+  
+  // Confirmar acción
+  if (!confirm(`¿Deseas clonar el equipo "${equipo.nombre}" (${equipo.serie})?`)) {
+    return;
+  }
+  
+  // Llenar el formulario con los datos del equipo
+  document.getElementById("nombre").value = equipo.nombre || '';
+  document.getElementById("marca").value = equipo.marca || '';
+  document.getElementById("modelo").value = equipo.modelo || '';
+  document.getElementById("serie").value = ''; // Serie vacía para evitar duplicados
+  document.getElementById("categoria").value = equipo.categoria || 'general';
+  document.getElementById("estado").value = equipo.estado || 'operativo';
+  document.getElementById("ubicacion").value = equipo.ubicacion || '';
+  document.getElementById("responsable").value = equipo.responsable || '';
+  document.getElementById("departamento").value = equipo.departamento || '';
+  document.getElementById("proveedor").value = equipo.proveedor || '';
+  document.getElementById("numero-contrato").value = equipo.contrato || '';
+  document.getElementById("fecha-compra").value = equipo.fechaCompra || '';
+  document.getElementById("fecha-garantia").value = equipo.fechaGarantia || '';
+  document.getElementById("costo").value = equipo.costo || '';
+  document.getElementById("imagen").value = equipo.imagen || '';
+  document.getElementById("manual").value = equipo.manual || '';
+  document.getElementById("observaciones").value = equipo.observaciones || '';
+  
+  // Activar modo clonación
+  activarModoClonacion('Registrar Equipo Clonado');
+  
+  // Hacer scroll al formulario
+  form.scrollIntoView({ behavior: 'smooth' });
+  
+  // Foco en el campo de número de serie
+  document.getElementById("serie").focus();
+  
+  // Mostrar mensaje de modo clonación
+  mostrarMensajeEdicion(`Equipo "${equipo.nombre}" clonado. Modifica el número de serie y otros datos según sea necesario.`);
+}
+
+// Función para activar modo edición
+function activarModoEdicion(serie, textoBoton) {
+  // Marcar el formulario como en modo edición
+  form.dataset.editando = serie;
+  
+  // Cambiar apariencia del formulario
+  form.classList.add('form-editing');
+  
+  // Cambiar el texto y estilo del botón de submit
+  const submitButton = document.getElementById('btn-submit');
+  const cancelButton = document.getElementById('btn-cancelar');
+  
+  if (submitButton) {
+    submitButton.textContent = textoBoton;
+  }
+  
+  // Mostrar botón de cancelar
+  if (cancelButton) {
+    cancelButton.style.display = 'inline-block';
+  }
+}
+
+// Función para activar modo clonación
+function activarModoClonacion(textoBoton) {
+  // Marcar el formulario como en modo clonación
+  form.dataset.clonando = 'true';
+  
+  // Cambiar apariencia del formulario
+  form.classList.add('form-editing');
+  
+  // Cambiar el texto del botón de submit
+  const submitButton = document.getElementById('btn-submit');
+  const cancelButton = document.getElementById('btn-cancelar');
+  
+  if (submitButton) {
+    submitButton.textContent = textoBoton;
+  }
+  
+  // Mostrar botón de cancelar
+  if (cancelButton) {
+    cancelButton.style.display = 'inline-block';
+  }
+}
+
+// Función para mostrar mensaje de edición
+function mostrarMensajeEdicion(mensaje) {
+  // Crear o actualizar el mensaje
+  let mensajeDiv = document.getElementById('mensaje-edicion');
+  if (!mensajeDiv) {
+    mensajeDiv = document.createElement('div');
+    mensajeDiv.id = 'mensaje-edicion';
+    mensajeDiv.style.cssText = `
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 12px;
+      border: 1px solid #ffeaa7;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      text-align: center;
+    `;
+    form.insertBefore(mensajeDiv, form.firstChild);
+  }
+  
+  mensajeDiv.textContent = mensaje;
+  mensajeDiv.style.display = 'block';
+}
+
+// Función para ocultar mensaje de edición
+function ocultarMensajeEdicion() {
+  const mensajeDiv = document.getElementById('mensaje-edicion');
+  if (mensajeDiv) {
+    mensajeDiv.style.display = 'none';
+  }
+}
+
+// Función para activar modo edición
+function activarModoEdicion(serie, textoBoton) {
+  // Marcar el formulario como en modo edición
+  form.dataset.editando = serie;
+  
+  // Cambiar apariencia del formulario
+  form.classList.add('form-editing');
+  
+  // Cambiar el texto y estilo del botón de submit
+  const submitButton = document.getElementById('btn-submit');
+  const cancelButton = document.getElementById('btn-cancelar');
+  
+  if (submitButton) {
+    submitButton.textContent = textoBoton;
+  }
+  
+  // Mostrar botón de cancelar
+  if (cancelButton) {
+    cancelButton.style.display = 'inline-block';
+  }
+}
+
+// Función para activar modo clonación
+function activarModoClonacion(textoBoton) {
+  // Marcar el formulario como en modo clonación
+  form.dataset.clonando = 'true';
+  
+  // Cambiar apariencia del formulario
+  form.classList.add('form-editing');
+  
+  // Cambiar el texto del botón de submit
+  const submitButton = document.getElementById('btn-submit');
+  const cancelButton = document.getElementById('btn-cancelar');
+  
+  if (submitButton) {
+    submitButton.textContent = textoBoton;
+  }
+  
+  // Mostrar botón de cancelar
+  if (cancelButton) {
+    cancelButton.style.display = 'inline-block';
+  }
+}
+
+// Función para mostrar mensaje de edición
+function mostrarMensajeEdicion(mensaje) {
+  // Crear o actualizar el mensaje
+  let mensajeDiv = document.getElementById('mensaje-edicion');
+  if (!mensajeDiv) {
+    mensajeDiv = document.createElement('div');
+    mensajeDiv.id = 'mensaje-edicion';
+    mensajeDiv.style.cssText = `
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 12px;
+      border: 1px solid #ffeaa7;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-weight: bold;
+      text-align: center;
+    `;
+    form.insertBefore(mensajeDiv, form.firstChild);
+  }
+  
+  mensajeDiv.textContent = mensaje;
+  mensajeDiv.style.display = 'block';
+}
+
+// Función para ocultar mensaje de edición
+function ocultarMensajeEdicion() {
+  const mensajeDiv = document.getElementById('mensaje-edicion');
+  if (mensajeDiv) {
+    mensajeDiv.style.display = 'none';
+  }
+}
+
+// Función para cancelar edición
+function cancelarEdicion() {
+  // Confirmar cancelación
+  if (form.dataset.editando || form.dataset.clonando) {
+    if (!confirm('¿Estás seguro de que deseas cancelar? Se perderán todos los cambios.')) {
+      return;
+    }
+  }
+  
+  // Limpiar el modo edición/clonación
+  delete form.dataset.editando;
+  delete form.dataset.clonando;
+  
+  // Restaurar apariencia del formulario
+  form.classList.remove('form-editing');
+  
+  // Restaurar el texto y estilo del botón de submit
+  const submitButton = document.getElementById('btn-submit');
+  const cancelButton = document.getElementById('btn-cancelar');
+  
+  if (submitButton) {
+    submitButton.textContent = 'Registrar Equipo';
+  }
+  
+  // Ocultar botón de cancelar
+  if (cancelButton) {
+    cancelButton.style.display = 'none';
+  }
+  
+  // Limpiar el formulario
+  form.reset();
+  
+  // Ocultar mensaje de edición
+  ocultarMensajeEdicion();
+  
+  // Hacer scroll al formulario
+  form.scrollIntoView({ behavior: 'smooth' });
+  
+  // Mensaje de confirmación
+  alert('Operación cancelada. El formulario ha sido limpiado.');
 }
 
 // Función para importar CSV
@@ -508,9 +798,33 @@ function handleCSV(event) {
   reader.readAsText(file);
 }
 
-// ==============================================
-// FUNCIONES AUXILIARES Y DE SOPORTE
-// ==============================================
+// Función para cargar equipos en selectores
+function cargarEquiposEnSelector() {
+  const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+  const selector = document.getElementById('equipo-verificar');
+  
+  if (selector) {
+    selector.innerHTML = '<option value="">Seleccionar equipo...</option>';
+    equipos.forEach(equipo => {
+      const option = document.createElement('option');
+      option.value = equipo.serie;
+      option.textContent = `${equipo.nombre} (${equipo.serie}) - ${equipo.ubicacion}`;
+      selector.appendChild(option);
+    });
+  }
+  
+  // También cargar en filtros de historial
+  const filtroHistorial = document.getElementById('filtro-equipo-historial');
+  if (filtroHistorial) {
+    filtroHistorial.innerHTML = '<option value="">Todos los equipos</option>';
+    equipos.forEach(equipo => {
+      const option = document.createElement('option');
+      option.value = equipo.serie;
+      option.textContent = `${equipo.nombre} (${equipo.serie})`;
+      filtroHistorial.appendChild(option);
+    });
+  }
+}
 
 // Función para actualizar contadores
 function actualizarContadores() {
@@ -837,6 +1151,20 @@ function actualizarDashboard() {
   actualizarDashboardGrafico();
 }
 
+// Función para limpiar filtros y recargar vista
+function limpiarFiltros() {
+  const buscar = document.getElementById('buscar-texto');
+  const estado = document.getElementById('filtro-estado');
+  const categoria = document.getElementById('filtro-categoria');
+  const garantia = document.getElementById('filtro-garantia');
+  if (buscar) buscar.value = '';
+  if (estado) estado.value = '';
+  if (categoria) categoria.value = '';
+  if (garantia) garantia.value = '';
+  cargarEquipos();
+  actualizarDashboard();
+}
+
 // ==============================================
 // FUNCIONES DE DEPURACIÓN Y PRUEBA
 // ==============================================
@@ -946,7 +1274,7 @@ function registrarAccionSistema(accion, tipo = 'informativa') {
 
 // Función para mostrar notificaciones del sistema
 function mostrarNotificacionSistema(mensaje, tipo = 'info') {
-  console.log(`[NOTIFICACIÓN ${tipo.toUpperCase()}] ${mensaje}`);
+  console.log(`[NOTIFICACIÓN ${tipo.toUpperCASE()}] ${mensaje}`);
   
   // También registrar en el log
   registrarAccionSistema(mensaje, tipo);
@@ -1042,17 +1370,20 @@ function cargarConfiguracionAlertas() {
 // Función para abrir modal de configuración
 function abrirConfiguracionAlertas() {
   console.log('🔧 Abriendo modal de configuración de alertas...');
-  
+
   const modal = document.getElementById('modal-configuracion-alertas');
-  
+
   if (!modal) {
     console.error('❌ Modal de configuración no encontrado en el DOM');
     mostrarNotificacionSistema('❌ Error: Modal de configuración no encontrado', 'error');
     return;
   }
-  
+
   console.log('✅ Modal encontrado, configurando valores...');
-  
+
+  // Mostrar modal
+  modal.style.display = 'block';
+
   try {
     // Cargar valores actuales en el modal
     const elementos = {
@@ -1067,99 +1398,8 @@ function abrirConfiguracionAlertas() {
       'alerta-verificaciones-no-conformes': configuracionAlertas.verificacionesNoConformes,
       'frecuencia-alertas': configuracionAlertas.frecuenciaAlertas
     };
-    
+
     // Aplicar valores a los elementos del formulario
-    Object.keys(elementos).forEach(id => {
-      const elemento = document.getElementById(id);
-      if (elemento) {
-        if (elemento.type === 'checkbox') {
-          elemento.checked = elementos[id];
-        } else {
-          elemento.value = elementos[id];
-        }
-        console.log(`✅ ${id}: configurado`);
-      } else {
-        console.warn(`⚠️ Elemento ${id} no encontrado`);
-      }
-    });
-    
-    // Mostrar modal con animación
-    modal.style.display = 'flex';
-    modal.classList.add('show');
-    
-    // Asegurar que la animación se ejecute
-    setTimeout(() => {
-      modal.style.opacity = '1';
-    }, 10);
-    
-    console.log('✅ Modal de configuración abierto correctamente');
-    registrarEventoSistema('Modal de configuración de alertas abierto');
-    
-  } catch (error) {
-    console.error('❌ Error al abrir modal:', error);
-    mostrarNotificacionSistema('❌ Error al abrir la configuración: ' + error.message, 'error');
-  }
-}
-
-// Función para cerrar modal de configuración
-function cerrarConfiguracionAlertas() {
-  const modal = document.getElementById('modal-configuracion-alertas');
-  if (modal) {
-    // Animación de cierre
-    modal.style.opacity = '0';
-    modal.classList.remove('show');
-    setTimeout(() => {
-      modal.style.display = 'none';
-    }, 300);
-    
-    registrarEventoSistema('Modal de configuración de alertas cerrado');
-    console.log('🔒 Modal de configuración cerrado');
-  }
-}
-
-// Función para guardar configuración
-function guardarConfiguracionAlertas() {
-  try {
-    console.log('💾 Guardando configuración de alertas...');
-    
-    // Obtener valores del modal de configuración con validación
-    const obtenerValor = (id, tipo, valorPorDefecto) => {
-      const elemento = document.getElementById(id);
-      if (!elemento) return valorPorDefecto;
-      
-      if (tipo === 'checkbox') return elemento.checked;
-      if (tipo === 'number') return parseInt(elemento.value) || valorPorDefecto;
-      return elemento.value || valorPorDefecto;
-    };
-    
-    configuracionAlertas = {
-      garantiaVencida: obtenerValor('alerta-garantia-vencida', 'checkbox', true),
-      garantiaPorVencer: obtenerValor('alerta-garantia-por-vencer', 'checkbox', true),
-      diasGarantiaAlerta: obtenerValor('dias-garantia-alerta', 'number', 30),
-      equiposCriticos: obtenerValor('alerta-equipos-criticos', 'checkbox', true),
-      verificacionesPendientes: obtenerValor('alerta-verificaciones-pendientes', 'checkbox', true),
-      mantenimientoProlongado: obtenerValor('alerta-mantenimiento-prolongado', 'checkbox', true),
-      diasMantenimientoAlerta: obtenerValor('dias-mantenimiento-alerta', 'number', 7),
-      soporteVida: obtenerValor('alerta-soporte-vida', 'checkbox', true),
-      verificacionesNoConformes: obtenerValor('alerta-verificaciones-no-conformes', 'checkbox', true),
-      frecuenciaAlertas: obtenerValor('frecuencia-alertas', 'number', 1800000)
-    };
-    
-    // Guardar en localStorage
-    localStorage.setItem('configuracionAlertas', JSON.stringify(configuracionAlertas));
-    
-    // Reconfigurar verificación automática
-    configurarVerificacionAutomatica();
-    
-    // Verificar alertas inmediatamente con la nueva configuración
-    verificarAlertas();
-    
-    // Cerrar modal
-    cerrarConfiguracionAlertas();
-    
-    // Mostrar mensaje de éxito
-    mostrarNotificacionSistema('✅ Configuración de alertas guardada correctamente', 'success');
-    registrarEventoSistema('Configuración de alertas actualizada', JSON.stringify(configuracionAlertas));
     
     console.log('✅ Configuración guardada:', configuracionAlertas);
   } catch (error) {
@@ -1168,68 +1408,246 @@ function guardarConfiguracionAlertas() {
   }
 }
 
-// Función para probar el sistema de alertas
-function probarAlertas() {
-  console.log('🧪 Probando sistema de alertas...');
-  
-  try {
-    // Mostrar notificación de inicio de prueba
-    mostrarNotificacionSistema('🧪 Iniciando prueba del sistema de alertas...', 'info');
-    
-    // Simular algunas alertas de prueba
-    const alertasPrueba = [
-      {
-        id: 'test-' + Date.now(),
-        tipo: 'critica',
-        mensaje: '🚨 PRUEBA: Equipo crítico simulado fuera de servicio',
-        timestamp: new Date().toISOString(),
-        leida: false,
-        equipo: 'Equipo de Prueba',
-        categoria: 'test'
-      },
-      {
-        id: 'test-' + (Date.now() + 1),
-        tipo: 'advertencia',
-        mensaje: '⚠️ PRUEBA: Garantía por vencer simulada',
-        timestamp: new Date().toISOString(),
-        leida: false,
-        equipo: 'Equipo Test 2',
-        categoria: 'test'
-      },
-      {
-        id: 'test-' + (Date.now() + 2),
-        tipo: 'informativa',
-        mensaje: 'ℹ️ PRUEBA: Notificación informativa de prueba',
-        timestamp: new Date().toISOString(),
-        leida: false,
-        equipo: 'Sistema',
-        categoria: 'test'
-      }
-    ];
-    
-    // Agregar alertas de prueba
-    alertasPrueba.forEach(alerta => alertasActivas.push(alerta));
-    
-    // Actualizar interfaz
-    actualizarPanelNotificaciones();
-    actualizarResumenAlertas();
-    
-    // Registrar evento
-    registrarEventoSistema('Sistema de alertas probado', `${alertasPrueba.length} alertas de prueba generadas`);
-    
-    // Mostrar resultado
-    mostrarNotificacionSistema(`✅ Prueba completada: ${alertasPrueba.length} alertas de prueba generadas`, 'success');
-    
-    console.log('✅ Prueba del sistema de alertas completada');
-    console.log('📋 Alertas de prueba generadas:', alertasPrueba);
-    
-    // Información para el usuario
-    setTimeout(() => {
-      mostrarNotificacionSistema('💡 Las alertas de prueba se pueden eliminar con "Limpiar Notificaciones"', 'info');
-    }, 2000);
-    
-  } catch (error) {
-    console.error('❌ Error al probar alertas:', error);
-    mostrarNotificacionSistema('❌ Error al probar el sistema: ' + error.message, 'error');
+// Función para cerrar modal de configuración de alertas
+function cerrarConfiguracionAlertas() {
+  const modal = document.getElementById('modal-configuracion-alertas');
+  if (modal) {
+    modal.style.display = 'none';
   }
+}
+
+// Función para actualizar sección de equipos que requieren atención
+function actualizarEquiposAtencion() {
+  const contenedor = document.getElementById('equipos-atencion');
+  if (!contenedor) return;
+  contenedor.innerHTML = '';
+  const equipos = JSON.parse(localStorage.getItem('equiposMedicos')) || [];
+  // Listar equipos que no están operativos
+  equipos.filter(e => e.estado !== 'operativo').forEach(equipo => {
+    const div = document.createElement('div');
+    div.className = 'equipo-atencion';
+    div.textContent = `${equipo.nombre} (${equipo.serie}) - Estado: ${formatEstado(equipo.estado)}`;
+    contenedor.appendChild(div);
+  });
+}
+
+// Funciones stubs para sistema de alertas
+function verificarAlertas() {
+  // Implementar lógica de verificación de alertas
+  alertasActivas = []; // placeholder
+}
+
+function configurarVerificacionAutomatica() {
+  // Configura intervalos de verificación basados en configuracionAlertas.frecuenciaAlertas
+  if (intervalVerificacionAlertas) clearInterval(intervalVerificacionAlertas);
+  intervalVerificacionAlertas = setInterval(verificarAlertas, configuracionAlertas.frecuenciaAlertas);
+}
+
+function actualizarPanelNotificaciones() {
+  const lista = document.getElementById('lista-notificaciones');
+  const badge = document.getElementById('badge-total');
+  if (!lista || !badge) return;
+  lista.innerHTML = '';
+  alertasActivas.forEach(alerta => {
+    const div = document.createElement('div');
+    div.className = `notificacion ${alerta.leida ? 'leida' : 'pendiente'}`;
+    div.textContent = alerta.mensaje;
+    lista.appendChild(div);
+  });
+  badge.textContent = alertasActivas.filter(a => !a.leida).length;
+}
+
+function actualizarResumenAlertas() {
+  // Placeholder: actualizar contadores por tipo en resumen-alertas
+  document.getElementById('count-criticas').textContent = alertasActivas.filter(a => a.tipo === 'critica').length;
+  document.getElementById('count-advertencias').textContent = alertasActivas.filter(a => a.tipo === 'advertencia').length;
+  document.getElementById('count-informativas').textContent = alertasActivas.filter(a => a.tipo === 'informativa').length;
+  document.getElementById('count-mantenimiento').textContent = alertasActivas.filter(a => a.tipo === 'mantenimiento').length;
+}
+
+// Módulo Verificación Diaria: funciones básicas
+function iniciarVerificacion(e) {
+  e.preventDefault();
+  const serie = document.getElementById('equipo-verificar').value;
+  if (!serie) {
+    alert('Selecciona un equipo para verificar.');
+    return;
+  }
+  const equipos = JSON.parse(localStorage.getItem('equiposMedicos')) || [];
+  const equipo = equipos.find(e => e.serie === serie);
+  if (!equipo) {
+    alert('Equipo no encontrado.');
+    return;
+  }
+  // Mostrar datos equipo
+  document.getElementById('nombre-equipo-verificacion').textContent = equipo.nombre;
+  document.getElementById('ubicacion-equipo-verificacion').textContent = equipo.ubicacion;
+  document.getElementById('categoria-equipo-verificacion').textContent = formatCategoria(equipo.categoria);
+  document.getElementById('serie-equipo-verificacion').textContent = equipo.serie;
+  // Generar checklist según categoría
+  generarChecklist(equipo.categoria);
+  // Mostrar formulario
+  document.getElementById('formulario-verificacion').style.display = 'block';
+}
+
+function guardarVerificacion() {
+  // Recoger datos del formulario
+  const resultado = document.getElementById('resultado-general').value;
+  const obs = document.getElementById('observaciones-verificacion').value;
+  const fecha = new Date().toISOString();
+  const serie = document.getElementById('equipo-verificar').value;
+  const responsable = document.getElementById('responsable-verificacion').value;
+  // Guardar en localStorage (historial)
+  const historial = JSON.parse(localStorage.getItem('historialVerificaciones')) || [];
+  historial.push({ fecha, serie, responsable, resultado, observaciones: obs });
+  localStorage.setItem('historialVerificaciones', JSON.stringify(historial));
+  alert('Verificación guardada.');
+  cancelarVerificacion();
+}
+
+function cancelarVerificacion() {
+  // Ocultar formulario de verificación
+  document.getElementById('formulario-verificacion').style.display = 'none';
+  // Limpiar campos
+  document.getElementById('responsable-verificacion').value = '';
+  document.getElementById('resultado-general').value = '';
+  document.getElementById('observaciones-verificacion').value = '';
+  // Reset select
+  document.getElementById('equipo-verificar').value = '';
+  // Limpiar checklist dinámico
+  document.getElementById('checklist-container').innerHTML = '';
+}
+
+function aplicarFiltrosHistorial() {
+  // Cargar historial completo y mostrar en consola por ahora
+  const historial = JSON.parse(localStorage.getItem('historialVerificaciones')) || [];
+  console.log('Historial verificaciones:', historial);
+  alert(`Total verificaciones: ${historial.length}`);
+}
+
+function exportarVerificaciones() {
+  const historial = JSON.parse(localStorage.getItem('historialVerificaciones')) || [];
+  if (!historial.length) {
+    alert('No hay verificaciones para exportar.');
+    return;
+  }
+  // Generar CSV básico
+  let csv = 'Fecha,Serie,Responsable,Resultado,Observaciones\n';
+  historial.forEach(v => {
+    csv += `${v.fecha},${v.serie},${v.responsable},${v.resultado},"${v.observaciones}"\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'verificaciones.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+// Función para limpiar números de serie problemáticos (stub global)
+function limpiarNumerosSerieProblematicos() {
+  const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+  let modif = 0;
+  equipos.forEach(e => {
+    if (e.serie.includes("'") || e.serie.includes('"')) {
+      e.serie = e.serie.replace(/['"]/g, '');
+      modif++;
+    }
+  });
+  if (modif > 0) {
+    localStorage.setItem("equiposMedicos", JSON.stringify(equipos));
+    cargarEquipos();
+    actualizarDashboard();
+    alert(`Se han limpiado ${modif} números de serie problemáticos.`);
+  } else {
+    alert('No se encontraron números de serie problemáticos.');
+  }
+}
+
+// Función para aplicar filtros de búsqueda y estado
+function aplicarFiltros() {
+  const texto = document.getElementById('buscar-texto').value.trim().toLowerCase();
+  const estadoVal = document.getElementById('filtro-estado').value;
+  const categoriaVal = document.getElementById('filtro-categoria').value;
+  const garantiaVal = document.getElementById('filtro-garantia').value;
+
+  // Filtrar sobre el array original
+  equiposFiltrados = equiposOriginales.filter(e => {
+    let ok = true;
+    // Filtro de texto en campos clave
+    if (texto) {
+      const cadena = `${e.nombre} ${e.marca} ${e.modelo} ${e.serie} ${e.ubicacion}`.toLowerCase();
+      ok = cadena.includes(texto);
+    }
+    // Filtro por estado
+    if (ok && estadoVal) ok = e.estado === estadoVal;
+    // Filtro por categoría
+    if (ok && categoriaVal) ok = e.categoria === categoriaVal;
+    // Filtro por garantía
+    if (ok && garantiaVal) {
+      const estGar = getGarantiaEstado(e.fechaGarantia).class;
+      ok = (
+        (garantiaVal === 'vigente' && estGar === 'vigente') ||
+        (garantiaVal === 'por-vencer' && estGar === 'por-vencer') ||
+        (garantiaVal === 'vencida' && estGar === 'vencida') ||
+        (garantiaVal === 'sin-garantia' && estGar === 'sin-garantia')
+      );
+    }
+    return ok;
+  });
+
+  // Renderizar tabla con resultados filtrados
+  tabla.innerHTML = '';
+  equiposFiltrados.forEach(agregarFilaTabla);
+
+  // Actualizar contadores y métricas
+  actualizarContadores();
+}
+
+// Función global para cerrar modal genérico
+function cerrarModal() {
+  const modal = document.querySelector('.modal');
+  if (modal) modal.remove();
+}
+
+// Plantillas de checklist por categoría de equipo
+const checklistTemplates = {
+  'soporte-vida': [
+    { name: 'nivel-bateria', text: 'Verificar nivel de batería' },
+    { name: 'alarma-funcional', text: 'Comprobar alarma funcional' }
+  ],
+  'alta-tecnologia': [
+    { name: 'conexiones-red', text: 'Verificar conexiones de red' },
+    { name: 'software-actualizado', text: 'Confirmar software actualizado' }
+  ],
+  'critico': [
+    { name: 'prueba-funcional', text: 'Realizar prueba funcional completa' },
+    { name: 'revisar-cables', text: 'Revisar cables y conectores' }
+  ],
+  'general': [
+    { name: 'limpieza', text: 'Verificar limpieza del equipo' },
+    { name: 'fusibles', text: 'Comprobar estado de fusibles' }
+  ]
+};
+
+// Genera y muestra checklist dinámico en el formulario de verificación
+function generarChecklist(categoria) {
+  const container = document.getElementById('checklist-container');
+  container.innerHTML = '';
+  const items = checklistTemplates[categoria] || [{ name: 'check-general', text: 'Revisión general del equipo' }];
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'checklist-item';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = item.name;
+    checkbox.name = item.name;
+    const label = document.createElement('label');
+    label.htmlFor = item.name;
+    label.textContent = item.text;
+    div.appendChild(checkbox);
+    div.appendChild(label);
+    container.appendChild(div);
+  });
 }

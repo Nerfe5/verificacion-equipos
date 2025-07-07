@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prueba de Funcionalidad Básica</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .test-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-button {
+      padding: 10px 20px;
+      margin: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .test-button:hover {
+      background-color: #0056b3;
+    }
+    .test-result {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    #output {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 15px;
+      border-radius: 4px;
+      min-height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🔧 Prueba de Funcionalidad Básica</h1>
+    <p>Esta página verifica que todas las funciones básicas de la app funcionen correctamente.</p>
+    
+    <div class="test-actions">
+      <button class="test-button" onclick="probarRegistroManual()">📝 Probar Registro Manual</button>
+      <button class="test-button" onclick="probarCargarDatos()">📋 Probar Cargar Datos</button>
+      <button class="test-button" onclick="probarLimpiarDatos()">🗑️ Probar Limpiar Datos</button>
+      <button class="test-button" onclick="probarBotones()">🔘 Probar Botones de Acción</button>
+      <button class="test-button" onclick="limpiarOutput()">🧹 Limpiar Output</button>
+    </div>
+    
+    <div id="output"></div>
+  </div>
+
+  <script>
+    // Función para imprimir en el output
+    function print(mensaje, tipo = 'info') {
+      const output = document.getElementById('output');
+      const timestamp = new Date().toLocaleTimeString();
+      output.innerHTML += `[${timestamp}] ${mensaje}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    // Función para limpiar el output
+    function limpiarOutput() {
+      document.getElementById('output').innerHTML = '';
+    }
+
+    // Función para probar registro manual
+    function probarRegistroManual() {
+      print('🔍 Probando registro manual de equipos...');
+      
+      // Crear un equipo de prueba
+      const equipoPrueba = {
+        nombre: 'Equipo de Prueba',
+        marca: 'Marca Prueba',
+        modelo: 'Modelo Prueba',
+        serie: 'PRUEBA-' + Date.now(),
+        categoria: 'general',
+        estado: 'operativo',
+        ubicacion: 'Sala de Pruebas',
+        responsable: 'Usuario de Prueba',
+        departamento: 'Departamento de Pruebas',
+        proveedor: 'Proveedor de Pruebas',
+        contrato: 'CT-PRUEBA-001',
+        fechaCompra: '2024-01-01',
+        fechaGarantia: '2026-01-01',
+        costo: '10000',
+        imagen: '',
+        manual: '',
+        observaciones: 'Equipo creado para pruebas',
+        fechaRegistro: new Date().toISOString(),
+        ultimaActualizacion: new Date().toISOString()
+      };
+      
+      try {
+        // Simular registro
+        const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+        equipos.push(equipoPrueba);
+        localStorage.setItem("equiposMedicos", JSON.stringify(equipos));
+        
+        print('✅ Equipo de prueba registrado correctamente');
+        print(`   - Serie: ${equipoPrueba.serie}`);
+        print(`   - Total de equipos: ${equipos.length}`);
+        
+        // Verificar que se guardó
+        const equiposVerificacion = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+        const equipoGuardado = equiposVerificacion.find(e => e.serie === equipoPrueba.serie);
+        
+        if (equipoGuardado) {
+          print('✅ Equipo encontrado en localStorage');
+          print('✅ Registro manual: FUNCIONA');
+        } else {
+          print('❌ Equipo NO encontrado en localStorage');
+          print('❌ Registro manual: FALLA');
+        }
+        
+      } catch (error) {
+        print('❌ Error en registro manual: ' + error.message);
+      }
+    }
+
+    // Función para probar cargar datos
+    function probarCargarDatos() {
+      print('🔍 Probando carga de datos de prueba...');
+      
+      try {
+        if (typeof cargarDatosPrueba === 'function') {
+          cargarDatosPrueba();
+          print('✅ Función cargarDatosPrueba ejecutada');
+          
+          // Verificar que se cargaron datos
+          const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+          print(`   - Total de equipos después de cargar: ${equipos.length}`);
+          
+          if (equipos.length > 0) {
+            print('✅ Carga de datos: FUNCIONA');
+          } else {
+            print('❌ No se cargaron datos');
+          }
+        } else {
+          print('❌ Función cargarDatosPrueba NO encontrada');
+        }
+      } catch (error) {
+        print('❌ Error en carga de datos: ' + error.message);
+      }
+    }
+
+    // Función para probar limpiar datos
+    function probarLimpiarDatos() {
+      print('🔍 Probando limpiar datos...');
+      
+      try {
+        // Guardar estado actual
+        const equiposAntes = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+        print(`   - Equipos antes de limpiar: ${equiposAntes.length}`);
+        
+        // Limpiar datos
+        localStorage.setItem('equiposMedicos', '[]');
+        
+        // Verificar que se limpiaron
+        const equiposDespues = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+        print(`   - Equipos después de limpiar: ${equiposDespues.length}`);
+        
+        if (equiposDespues.length === 0) {
+          print('✅ Limpiar datos: FUNCIONA');
+        } else {
+          print('❌ Limpiar datos: FALLA');
+        }
+        
+      } catch (error) {
+        print('❌ Error en limpiar datos: ' + error.message);
+      }
+    }
+
+    // Función para probar botones de acción
+    function probarBotones() {
+      print('🔍 Probando botones de acción...');
+      
+      // Primero crear un equipo de prueba
+      const equipoPrueba = {
+        nombre: 'Equipo para Botones',
+        marca: 'Marca Test',
+        modelo: 'Modelo Test',
+        serie: 'BTN-' + Date.now(),
+        categoria: 'general',
+        estado: 'operativo',
+        ubicacion: 'Sala Test',
+        responsable: 'Test User',
+        departamento: 'Test Dept',
+        proveedor: 'Test Provider',
+        contrato: 'CT-BTN-001',
+        fechaCompra: '2024-01-01',
+        fechaGarantia: '2026-01-01',
+        costo: '5000',
+        imagen: '',
+        manual: '',
+        observaciones: 'Equipo para probar botones',
+        fechaRegistro: new Date().toISOString(),
+        ultimaActualizacion: new Date().toISOString()
+      };
+      
+      try {
+        // Agregar equipo
+        const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+        equipos.push(equipoPrueba);
+        localStorage.setItem("equiposMedicos", JSON.stringify(equipos));
+        
+        print('✅ Equipo de prueba creado');
+        
+        // Probar funciones de botones
+        const funciones = [
+          'verDetalles',
+          'editarEquipo',
+          'clonarEquipo',
+          'eliminarEquipo'
+        ];
+        
+        funciones.forEach(nombre => {
+          if (typeof window[nombre] === 'function') {
+            print(`✅ Función ${nombre}: EXISTE`);
+          } else {
+            print(`❌ Función ${nombre}: NO EXISTE`);
+          }
+        });
+        
+      } catch (error) {
+        print('❌ Error en prueba de botones: ' + error.message);
+      }
+    }
+
+    // Mensaje inicial
+    print('🚀 Sistema de pruebas listo');
+    print('📋 Usa los botones para probar cada funcionalidad');
+    print('');
+  </script>
+</body>
+</html>

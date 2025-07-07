@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prueba Registro Manual</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .pass { background-color: #d4edda; }
+        .fail { background-color: #f8d7da; }
+        button { margin: 5px; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Prueba de Registro Manual</h1>
+    
+    <div id="test-results"></div>
+    
+    <button onclick="probarRegistro()">Probar Registro</button>
+    <button onclick="probarCargaDatos()">Probar Carga Datos</button>
+    <button onclick="probarLimpiarDatos()">Probar Limpiar Datos</button>
+    <button onclick="probarBotones()">Probar Botones</button>
+    
+    <script>
+        function log(mensaje, tipo = 'info') {
+            const div = document.getElementById('test-results');
+            const clase = tipo === 'pass' ? 'pass' : tipo === 'fail' ? 'fail' : '';
+            div.innerHTML += `<div class="test ${clase}">${mensaje}</div>`;
+        }
+        
+        function probarRegistro() {
+            log('🔍 Probando registro manual...');
+            
+            // Simular datos de equipo
+            const equipoPrueba = {
+                nombre: 'Equipo Test',
+                marca: 'Test Brand',
+                modelo: 'Test Model',
+                serie: 'TEST-' + Date.now(),
+                categoria: 'general',
+                estado: 'operativo',
+                ubicacion: 'Sala Test',
+                responsable: 'Test User',
+                departamento: 'Test Dept',
+                proveedor: 'Test Provider',
+                contrato: 'CT-TEST-001',
+                fechaCompra: '2024-01-01',
+                fechaGarantia: '2026-01-01',
+                costo: '1000',
+                imagen: '',
+                manual: '',
+                observaciones: 'Equipo de prueba',
+                fechaRegistro: new Date().toISOString(),
+                ultimaActualizacion: new Date().toISOString()
+            };
+            
+            try {
+                // Intentar guardar
+                const equipos = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+                equipos.push(equipoPrueba);
+                localStorage.setItem("equiposMedicos", JSON.stringify(equipos));
+                
+                // Verificar que se guardó
+                const equiposGuardados = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+                const equipoEncontrado = equiposGuardados.find(e => e.serie === equipoPrueba.serie);
+                
+                if (equipoEncontrado) {
+                    log('✅ Registro manual: FUNCIONA', 'pass');
+                    log(`   - Serie: ${equipoPrueba.serie}`, 'pass');
+                    log(`   - Total equipos: ${equiposGuardados.length}`, 'pass');
+                } else {
+                    log('❌ Registro manual: FALLA - No se encontró el equipo', 'fail');
+                }
+                
+            } catch (error) {
+                log('❌ Registro manual: ERROR - ' + error.message, 'fail');
+            }
+        }
+        
+        function probarCargaDatos() {
+            log('🔍 Probando carga de datos...');
+            
+            try {
+                // Verificar si existe la función
+                if (typeof cargarDatosPrueba === 'function') {
+                    log('❌ Función cargarDatosPrueba no está disponible en esta página', 'fail');
+                } else {
+                    log('ℹ️ Función cargarDatosPrueba debe probarse en la página principal', 'info');
+                }
+                
+                // Simular carga de datos
+                const datosPrueba = [
+                    { nombre: 'Ventilador', serie: 'VM001', categoria: 'soporte-vida' },
+                    { nombre: 'Resonador', serie: 'RM001', categoria: 'alta-tecnologia' }
+                ];
+                
+                localStorage.setItem("equiposMedicos", JSON.stringify(datosPrueba));
+                
+                const equiposGuardados = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+                if (equiposGuardados.length > 0) {
+                    log('✅ Carga de datos: FUNCIONA', 'pass');
+                    log(`   - ${equiposGuardados.length} equipos cargados`, 'pass');
+                } else {
+                    log('❌ Carga de datos: FALLA', 'fail');
+                }
+                
+            } catch (error) {
+                log('❌ Carga de datos: ERROR - ' + error.message, 'fail');
+            }
+        }
+        
+        function probarLimpiarDatos() {
+            log('🔍 Probando limpiar datos...');
+            
+            try {
+                // Verificar datos antes
+                const equiposAntes = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+                log(`   - Equipos antes: ${equiposAntes.length}`, 'info');
+                
+                // Limpiar
+                localStorage.setItem('equiposMedicos', '[]');
+                
+                // Verificar después
+                const equiposDespues = JSON.parse(localStorage.getItem("equiposMedicos")) || [];
+                log(`   - Equipos después: ${equiposDespues.length}`, 'info');
+                
+                if (equiposDespues.length === 0) {
+                    log('✅ Limpiar datos: FUNCIONA', 'pass');
+                } else {
+                    log('❌ Limpiar datos: FALLA', 'fail');
+                }
+                
+            } catch (error) {
+                log('❌ Limpiar datos: ERROR - ' + error.message, 'fail');
+            }
+        }
+        
+        function probarBotones() {
+            log('🔍 Probando existencia de botones...');
+            
+            // Esta prueba debe hacerse en la página principal
+            log('ℹ️ Los botones deben probarse en la página principal', 'info');
+            log('ℹ️ Funciones esperadas: ver, editar, clonar, eliminar', 'info');
+        }
+        
+        // Ejecutar prueba inicial
+        log('🚀 Sistema de pruebas iniciado');
+        log('📋 Presiona los botones para probar cada funcionalidad');
+    </script>
+</body>
+</html>

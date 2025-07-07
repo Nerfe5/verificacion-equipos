@@ -65,6 +65,61 @@ button[type="submit"]:hover {
   background-color: #218838;
 }
 
+/* Estilos para botones de acción del formulario */
+.form-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.form-actions button {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.form-actions button[type="submit"] {
+  background-color: #28a745;
+  color: white;
+}
+
+.form-actions button[type="submit"]:hover {
+  background-color: #218838;
+}
+
+.form-actions .btn-cancelar {
+  background-color: #6c757d;
+  color: white;
+}
+
+.form-actions .btn-cancelar:hover {
+  background-color: #5a6268;
+}
+
+/* Indicador de modo edición */
+.form-editing {
+  border: 2px solid #ffc107;
+  background-color: #fffbf0;
+}
+
+.form-editing legend {
+  color: #856404;
+}
+
+.form-editing .form-actions button[type="submit"] {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.form-editing .form-actions button[type="submit"]:hover {
+  background-color: #e0a800;
+}
+
 /* Estilos para la tabla */
 table {
   width: 100%;
