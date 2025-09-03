@@ -1,0 +1,2191 @@
+/* ======================================================
+   SISTEMA DE GESTIÓN DE EQUIPAMIENTO BIOMÉDICO
+   Archivo CSS principal
+   ====================================================== */
+
+/* ---- 1. VARIABLES Y CONFIGURACIÓN ---- */
+:root {
+    /* Paleta de colores biomédicos */
+    --primary-color: #0078D7;      /* Azul médico - color principal */
+    --secondary-color: #009688;    /* Verde teal - color secundario */
+    
+    /* Estados y alertas */
+    --success-color: #28A745;      /* Verde - operativo/garantía vigente */
+    --warning-color: #FFC107;      /* Ámbar - mantenimiento/por vencer */
+    --danger-color: #DC3545;       /* Rojo - fuera de servicio/vencido */
+    --info-color: #17A2B8;         /* Azul claro - calibración/contratos */
+    --neutral-color: #6C757D;      /* Gris - dado de baja */
+    
+    /* Colores de fondo */
+    --bg-light: #F8F9FA;           /* Gris muy claro para fondos */
+    --bg-white: #FFFFFF;           /* Blanco para tarjetas y elementos */
+    --bg-dark: #343A40;            /* Oscuro para contraste */
+    
+    /* Colores de texto */
+    --text-dark: #212529;          /* Casi negro para texto principal */
+    --text-muted: #6C757D;         /* Gris para texto secundario */
+    --text-light: #FFFFFF;         /* Blanco para texto sobre fondos oscuros */
+    
+    /* Grises para bordes y separadores */
+    --gray-100: #F8F9FA;
+    --gray-200: #E9ECEF;
+    --gray-300: #DEE2E6;
+    --gray-400: #CED4DA;
+    --gray-500: #ADB5BD;
+    
+    /* Botones de acción */
+    --btn-editar-color: #00C853;    /* Verde brillante */
+    --btn-clonar-color: #FFD600;    /* Amarillo brillante */
+    --btn-eliminar-color: #FF3D00;  /* Rojo brillante */
+    
+    /* Efectos y espaciados */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
+    --shadow-lg: 0 8px 16px rgba(0,0,0,0.1);
+    
+    --spacing-xs: 0.25rem;   /* 4px */
+    --spacing-sm: 0.5rem;    /* 8px */
+    --spacing-md: 1rem;      /* 16px */
+    --spacing-lg: 1.5rem;    /* 24px */
+    --spacing-xl: 2rem;      /* 32px */
+    --spacing-xxl: 3rem;     /* 48px */
+    
+    /* Bordes y radios */
+    --border-radius-sm: 4px;
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    
+    /* Transiciones */
+    --transition-fast: all 0.2s ease;
+    --transition: all 0.3s ease;
+}
+
+/* ---- 2. RESETEO Y ESTILOS BASE ---- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-dark);
+    background-color: var(--gray-100);
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text-dark);
+}
+
+h1 { font-size: 2.25rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.125rem; }
+h6 { font-size: 1rem; }
+
+p {
+    margin-top: 0;
+    margin-bottom: var(--spacing-md);
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+a:hover {
+    color: #0056b3; /* Color más oscuro al pasar el mouse */
+}
+
+/* ---- 3. LAYOUT PRINCIPAL ---- */
+.container {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+/* Contenedor principal para todas las secciones */
+.main-container {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+/* Separador entre secciones */
+hr {
+    border: 0;
+    height: 1px;
+    background-color: var(--gray-300);
+    margin: var(--spacing-xl) auto;
+    width: 100%;
+    max-width: 1600px;
+}
+
+/* ---- 4. SECCIONES PRINCIPALES ---- */
+/* Estilo base para todas las secciones principales */
+.section-base {
+    width: 100%;
+    max-width: 1600px;
+    margin: var(--spacing-xl) auto;
+    padding: var(--spacing-xl);
+    background-color: var(--bg-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-200);
+}
+
+/* Aplicamos el estilo base a todas las secciones */
+.dashboard,
+.alerts-section,
+.categories-section,
+.verification-module,
+.registro-section,
+.verificacion-section,
+.historial-verificaciones {
+    width: 100%;
+    max-width: 1600px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background: var(--bg-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(0,0,0,0.08);
+    box-sizing: border-box;
+}
+
+/* Encabezados de sección */
+.section-header {
+    font-size: 1.75rem;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--primary-color);
+    text-align: center;
+    font-weight: 600;
+}
+
+/* ---- 5. DASHBOARD Y ESTADÍSTICAS ---- */
+/* Grid para estadísticas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+    width: 100%;
+}
+
+/* Tarjeta de estadística */
+.stat-card {
+    position: relative;
+    background: var(--bg-white);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    transition: var(--transition);
+    height: 100%;
+    min-height: 100px;
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Icono de estadística */
+.stat-icon {
+    font-size: 2.25rem;
+    line-height: 1;
+    flex-shrink: 0;
+    height: 60px;
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(0,0,0,0.04);
+}
+
+/* Contenido de estadística */
+.stat-content {
+    flex-grow: 1;
+}
+
+/* Número de estadística */
+.stat-number {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Etiqueta de estadística */
+.stat-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Variantes de tarjetas de estadísticas */
+.stat-card.total {
+    border-left: 5px solid var(--primary-color);
+}
+.stat-card.total .stat-icon {
+    color: var(--primary-color);
+}
+
+.stat-card.operativo {
+    border-left: 5px solid var(--success-color);
+}
+.stat-card.operativo .stat-icon {
+    color: var(--success-color);
+}
+
+.stat-card.mantenimiento {
+    border-left: 5px solid var(--warning-color);
+}
+.stat-card.mantenimiento .stat-icon {
+    color: var(--warning-color);
+}
+
+.stat-card.fuera-servicio {
+    border-left: 5px solid var(--danger-color);
+}
+.stat-card.fuera-servicio .stat-icon {
+    color: var(--danger-color);
+}
+
+.stat-card.calibracion {
+    border-left: 5px solid var(--info-color);
+}
+.stat-card.calibracion .stat-icon {
+    color: var(--info-color);
+}
+
+/* ---- 6. CATEGORÍAS ---- */
+/* Grid para categorías */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+    width: 100%;
+}
+
+/* Tarjeta de categoría */
+.category-card {
+    position: relative;
+    background: var(--bg-white);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    height: 100%;
+    min-height: 100px;
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+}
+
+.category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Barra de progreso de categoría */
+.category-bar {
+    height: 8px;
+    background-color: var(--gray-200);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+    position: relative;
+}
+
+.category-fill {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: width 0.3s ease;
+}
+
+/* Información de categoría */
+.category-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* Nombre de categoría */
+.category-name {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 1rem;
+}
+
+/* Contador de categoría */
+.category-count {
+    font-weight: 700;
+    font-size: 1.25rem;
+    min-width: 2.5rem;
+    text-align: right;
+}
+
+/* Variantes de categorías */
+.category-card.alta-tecnologia::before {
+    background-color: var(--primary-color);
+}
+.category-card.alta-tecnologia .category-fill {
+    background: linear-gradient(90deg, var(--primary-color), rgba(0, 120, 215, 0.7));
+}
+.category-card.alta-tecnologia .category-count {
+    color: var(--primary-color);
+}
+
+.category-card.soporte-vida::before {
+    background-color: var(--danger-color);
+}
+.category-card.soporte-vida .category-fill {
+    background: linear-gradient(90deg, var(--danger-color), rgba(220, 53, 69, 0.7));
+}
+.category-card.soporte-vida .category-count {
+    color: var(--danger-color);
+}
+
+.category-card.critico::before {
+    background-color: var(--warning-color);
+}
+.category-card.critico .category-fill {
+    background: linear-gradient(90deg, var(--warning-color), rgba(255, 193, 7, 0.7));
+}
+.category-card.critico .category-count {
+    color: var(--warning-color);
+}
+
+.category-card.general::before {
+    background-color: var(--info-color);
+}
+.category-card.general .category-fill {
+    background: linear-gradient(90deg, var(--info-color), rgba(23, 162, 184, 0.7));
+}
+.category-card.general .category-count {
+    color: var(--info-color);
+}
+
+/* Indicador de categoría */
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    transition: var(--transition);
+}
+
+/* ---- 7. ALERTAS Y TARJETAS DE ALERTA ---- */
+/* Grid para tarjetas de alerta */
+.alerts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+}
+
+/* Tarjeta de alerta base */
+.alert-card {
+    position: relative;
+    background: var(--bg-white);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    transition: var(--transition);
+    border-left: 5px solid transparent;
+    overflow: hidden;
+}
+
+/* Gradiente sutil para añadir profundidad */
+.alert-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 100%);
+    z-index: 0;
+}
+
+.alert-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Icono de la alerta */
+.alert-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+    z-index: 1;
+    flex-shrink: 0;
+    height: 60px;
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.85);
+}
+
+/* Contenido de la alerta */
+.alert-content {
+    flex-grow: 1;
+    z-index: 1;
+}
+
+/* Número/contador de la alerta */
+.alert-number {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-dark);
+}
+
+/* Etiqueta de la alerta */
+.alert-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Variantes de tarjetas de alerta */
+.alert-card.garantia-vigente {
+    background-color: rgba(40, 167, 69, 0.05);
+    border-left-color: var(--success-color);
+}
+.alert-card.garantia-vigente .alert-icon {
+    color: var(--success-color);
+}
+.alert-card.garantia-vigente:hover {
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.15);
+}
+
+.alert-card.garantia-vencida {
+    background-color: rgba(220, 53, 69, 0.05);
+    border-left-color: var(--danger-color);
+}
+.alert-card.garantia-vencida .alert-icon {
+    color: var(--danger-color);
+}
+.alert-card.garantia-vencida:hover {
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.15);
+}
+
+.alert-card.garantia-por-vencer {
+    background-color: rgba(255, 193, 7, 0.05);
+    border-left-color: var(--warning-color);
+}
+.alert-card.garantia-por-vencer .alert-icon {
+    color: var(--warning-color);
+}
+.alert-card.garantia-por-vencer:hover {
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.15);
+}
+
+.alert-card.gestion-contrato {
+    background-color: rgba(23, 162, 184, 0.05);
+    border-left-color: var(--info-color);
+}
+.alert-card.gestion-contrato .alert-icon {
+    color: var(--info-color);
+}
+.alert-card.gestion-contrato:hover {
+    box-shadow: 0 8px 25px rgba(23, 162, 184, 0.15);
+}
+
+.alert-card.equipos-baja {
+    background-color: rgba(108, 117, 125, 0.05);
+    border-left-color: var(--neutral-color);
+}
+.alert-card.equipos-baja .alert-icon {
+    color: var(--neutral-color);
+}
+.alert-card.equipos-baja:hover {
+    box-shadow: 0 8px 25px rgba(108, 117, 125, 0.15);
+}
+
+/* ---- 8. TABLAS ---- */
+/* Contenedor de tabla con scroll horizontal */
+.table-container {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Tabla general */
+table {
+    width: 100%;
+    min-width: 1200px; /* Ancho mínimo para asegurar espacio para todas las columnas */
+    border-collapse: collapse;
+    background: var(--bg-white);
+    font-size: 0.85rem;
+}
+
+/* Encabezados de tabla */
+table thead th {
+    padding: var(--spacing-md) var(--spacing-sm);
+    text-align: center;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+/* Primer y último encabezado con bordes redondeados */
+table thead th:first-child {
+    border-top-left-radius: var(--border-radius-sm);
+}
+
+table thead th:last-child {
+    border-top-right-radius: var(--border-radius-sm);
+}
+
+/* Celdas de tabla */
+table td {
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--gray-300);
+    vertical-align: middle;
+}
+
+/* Celda específica para acciones */
+table td:last-child {
+    min-width: 90px;
+    padding: 0.25rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Hover en filas */
+table tbody tr:hover {
+    background-color: var(--gray-100);
+    transition: background-color 0.2s ease;
+}
+
+/* Contenedor de acciones */
+.acciones-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1px;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    margin: 0 auto;
+}
+
+/* Botones de acción */
+.btn-accion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    color: white;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.btn-accion.editar {
+    background-color: var(--btn-editar-color);
+}
+.btn-accion.editar:hover {
+    background-color: #00E676;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-accion.clonar {
+    background-color: var(--btn-clonar-color);
+}
+.btn-accion.clonar:hover {
+    background-color: #FFEA00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-accion.eliminar {
+    background-color: var(--btn-eliminar-color);
+}
+.btn-accion.eliminar:hover {
+    background-color: #FF6E40;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* ---- 9. FORMULARIOS Y CONTROLES ---- */
+/* Grupos de formularios */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+/* Etiquetas */
+label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+/* Campos de entrada */
+input, select, textarea {
+    width: 100%;
+    padding: 0.625rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius-sm);
+    font-size: 0.9375rem;
+    transition: var(--transition-fast);
+}
+
+/* Focus en campos de entrada */
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 120, 215, 0.1);
+}
+
+/* Grid para formularios */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+}
+
+/* Fieldsets */
+fieldset {
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    background: var(--gray-100);
+}
+
+/* Leyendas para fieldsets */
+legend {
+    padding: 0 var(--spacing-sm);
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Botones */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.25rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    line-height: 1.2;
+}
+
+/* Botón primario */
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.25);
+}
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 123, 255, 0.15);
+}
+
+/* Botón secundario */
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: var(--text-light);
+}
+
+/* Botón de éxito */
+.btn-success {
+    background-color: var(--success-color);
+    color: var(--text-light);
+}
+
+/* Botón de advertencia */
+.btn-warning {
+    background-color: var(--warning-color);
+    color: var(--text-dark);
+}
+
+/* Botón de peligro */
+.btn-danger {
+    background-color: var(--danger-color);
+    color: var(--text-light);
+}
+
+/* Botón de información */
+.btn-info {
+    background-color: var(--info-color);
+    color: var(--text-light);
+}
+
+/* Botón submit en formularios */
+form button[type="submit"] {
+    width: auto;
+    min-width: 160px;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    margin: var(--spacing-lg) auto;
+    display: block;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+form button[type="submit"]:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.25);
+}
+
+form button[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 123, 255, 0.15);
+}
+
+/* ---- 10. SECCIONES ESPECÍFICAS ---- */
+/* Panel de filtros */
+.panel-filtros {
+    background: var(--gray-100);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    margin: var(--spacing-lg) auto;
+    border: 1px solid var(--gray-300);
+    width: 100%;
+    max-width: 1500px;
+}
+
+/* Contenedor de filtros */
+.filtros-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Contadores de filtros - con mayor especificidad */
+.panel-filtros .filtros-contador-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    width: 100%;
+    background-color: transparent;
+    padding: var(--spacing-sm) 0;
+}
+
+.panel-filtros .contador-equipos {
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    background-color: rgba(0, 120, 215, 0.1);
+    color: var(--primary-color);
+    min-width: 180px;
+    margin: 0;
+}
+
+.panel-filtros #contador-equipos {
+    text-align: left;
+    margin-right: auto;
+}
+
+.panel-filtros #equipos-encontrados-container,
+.panel-filtros #contador-filtrados {
+    text-align: right;
+    margin-left: auto;
+}
+
+/* Centro de botones (nuevo contenedor) */
+.filtros-botones-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-xxl); /* Aumentado de spacing-lg a spacing-xxl */
+    margin-top: var(--spacing-lg);
+}
+
+/* Botones de filtro */
+.btn-limpiar, .btn-exportar {
+    width: 180px; /* Aumentado de 160px */
+    height: 42px;
+    padding: 0 var(--spacing-md);
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    background-color: var(--danger-color);
+    color: var(--text-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.panel-filtros .btn-limpiar {
+    width: 180px;
+    height: 42px;
+    padding: 0 var(--spacing-md);
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    background-color: var(--danger-color);
+    color: var(--text-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.panel-filtros .btn-limpiar:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.25);
+}
+
+.panel-filtros .btn-exportar {
+    width: 180px;
+    height: 42px;
+    padding: 0 var(--spacing-md);
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    background-color: var(--info-color);
+    color: var(--text-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.panel-filtros .btn-exportar:hover {
+    background-color: #138496;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(23, 162, 184, 0.25);
+}
+
+/* ---- 11. UTILIDADES Y RESPONSIVIDAD ---- */
+/* Clases de utilidad */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+/* Espaciados */
+.mt-1 { margin-top: var(--spacing-sm); }
+.mt-2 { margin-top: var(--spacing-md); }
+.mt-3 { margin-top: var(--spacing-lg); }
+.mb-1 { margin-bottom: var(--spacing-sm); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-lg); }
+.mx-auto { margin-left: auto; margin-right: auto; }
+
+/* Responsividad */
+@media (max-width: 1200px) {
+    :root {
+        font-size: 15px;
+    }
+    
+    .stats-grid,
+    .categories-grid,
+    .alerts-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+    
+    .dashboard,
+    .alerts-section,
+    .categories-section,
+    .verification-module,
+    .registro-section,
+    .verificacion-section,
+    .historial-verificaciones {
+        padding: 1.5rem;
+    }
+    
+    .stats-grid,
+    .alerts-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filtros-container {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Los estilos responsivos de la tabla ahora son manejados por .table-container */
+}
+
+/* Media queries para responsividad de alertas */
+@media (max-width: 1024px) {
+    .alerts-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .alerts-section {
+        padding: 1.5rem;
+    }
+    
+    .alerts-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .alert-card {
+        padding: 1.25rem 1rem;
+    }
+    
+    .alert-number {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .alerts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Utilidades */
+.text-center { text-align: center; }
+.mt-1 { margin-top: var(--spacing-sm); }
+.mt-2 { margin-top: var(--spacing-md); }
+.mt-3 { margin-top: var(--spacing-lg); }
+.mb-1 { margin-bottom: var(--spacing-sm); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-lg); }
+
+/* Dashboard */
+.dashboard {
+    margin-bottom: 3rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 1rem 0;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.stat-content {
+    flex-grow: 1;
+}
+
+.stat-number {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    color: var(--dark-color);
+    font-size: 0.875rem;
+    opacity: 0.8;
+}
+
+/* Estados de las tarjetas */
+.stat-card.total {
+    border-left: 4px solid var(--primary-color);
+}
+
+.stat-card.operativo {
+    border-left: 4px solid var(--success-color);
+}
+
+.stat-card.mantenimiento {
+    border-left: 4px solid var(--warning-color);
+}
+
+.stat-card.fuera-servicio {
+    border-left: 4px solid var(--danger-color);
+}
+
+
+
+/* Categorías */
+.categories-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+    padding: 0 var(--spacing-md);
+}
+
+.category-card {
+    background: var(--white-color);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.category-bar {
+    height: 8px;
+    background-color: var(--light-color);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.category-fill {
+    height: 100%;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.category-card.alta-tecnologia .category-fill {
+    background: linear-gradient(90deg, #74b9ff, #0984e3);
+}
+
+.category-card.soporte-vida .category-fill {
+    background: linear-gradient(90deg, #fd79a8, #e84393);
+}
+
+.category-card.critico .category-fill {
+    background: linear-gradient(90deg, #fdcb6e, #e17055);
+}
+
+.category-card.general .category-fill {
+    background: linear-gradient(90deg, #81ecec, #00b894);
+}
+
+.category-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-name {
+    font-weight: bold;
+    color: #2d3436;
+}
+
+.category-count {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0984e3;
+}
+
+/* Equipos que requieren atención */
+.attention-section {
+  margin-bottom: 30px;
+}
+
+.equipos-atencion-lista {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.equipo-atencion-item {
+  background: #fff5f5;
+  border-left: 4px solid #e53e3e;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.equipo-atencion-info {
+  flex: 1;
+}
+
+.equipo-atencion-nombre {
+  font-weight: bold;
+  color: #2d3436;
+  margin-bottom: 5px;
+}
+
+.equipo-atencion-problema {
+  color: #e17055;
+  font-size: 14px;
+}
+
+.equipo-atencion-ubicacion {
+  color: #636e72;
+  font-size: 12px;
+}
+
+.btn-ver-equipo {
+  background: #74b9ff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-ver-equipo:hover {
+  background: #0984e3;
+}
+
+.sin-problemas {
+  text-align: center;
+  color: #00b894;
+  font-style: italic;
+  padding: 20px;
+  background: #e8f5e8;
+  border-radius: 8px;
+}
+
+/* Módulo de Verificación Diaria */
+.modulo-verificacion {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+}
+
+.modulo-verificacion h2 {
+  color: #2c3e50;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 28px;
+  border-bottom: 3px solid #27ae60;
+  padding-bottom: 15px;
+}
+
+.modulo-verificacion h3 {
+  color: #34495e;
+  margin-bottom: 20px;
+  font-size: 20px;
+  border-left: 4px solid #27ae60;
+  padding-left: 15px;
+}
+
+/* Selector de Equipo */
+.selector-equipo {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  border: 2px solid #e9ecef;
+}
+
+.equipo-selector-container {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  gap: 20px;
+  align-items: end;
+}
+
+.selector-grupo label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #495057;
+}
+
+.btn-iniciar-verificacion {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+.btn-iniciar-verificacion:hover {
+  transform: translateY(-2px);
+}
+
+.btn-iniciar-verificacion:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Formulario de Verificación */
+.formulario-verificacion {
+  background: #fff;
+  border: 2px solid #27ae60;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.info-equipo-verificacion {
+  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.info-equipo-verificacion h3 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  border: none;
+  padding: 0;
+}
+
+.datos-equipo-verificacion {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* Checklist */
+.checklist-container {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: white;
+  border-radius: 8px;
+  border-left: 4px solid #dee2e6;
+  transition: border-color 0.3s ease;
+}
+
+.checklist-item.conforme {
+  border-left-color: #28a745;
+}
+
+.checklist-item.no-conforme {
+  border-left-color: #dc3545;
+}
+
+.checklist-item.na {
+  border-left-color: #6c757d;
+}
+
+.checklist-item input[type="radio"] {
+  margin-right: 10px;
+  transform: scale(1.2);
+}
+
+.checklist-descripcion {
+  flex: 1;
+  font-weight: 500;
+  color: #495057;
+}
+
+.checklist-opciones {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.checklist-opciones label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 0;
+}
+
+.checklist-opciones .conforme {
+  color: #28a745;
+}
+
+.checklist-opciones .no-conforme {
+  color: #dc3545;
+}
+
+.checklist-opciones .na {
+  color: #6c757d;
+}
+
+/* Observaciones y Resultado */
+.observaciones-verificacion,
+.resultado-verificacion {
+  margin-bottom: 20px;
+}
+
+.observaciones-verificacion textarea,
+.resultado-verificacion select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.resultado-verificacion select {
+  font-weight: bold;
+}
+
+/* Acciones de Verificación */
+.acciones-verificacion {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  padding-top: 20px;
+  border-top: 2px solid #e9ecef;
+}
+
+.btn-guardar-verificacion {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.btn-cancelar-verificacion {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Historial de Verificaciones */
+.historial-verificaciones {
+  margin: 2rem auto;
+  width: 100%;
+  max-width: 1400px;
+  padding: 2rem;
+  background: var(--white-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.filtros-historial {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin: 1rem auto 2rem;
+  padding: 1.5rem;
+  background: var(--gray-100);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--gray-300);
+  width: 100%;
+  max-width: 1400px;
+}
+
+.filtros-historial input,
+.filtros-historial select {
+  padding: 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.btn-aplicar-filtros {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#tabla-verificaciones {
+  margin-top: 20px;
+}
+
+.resultado-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.resultado-badge.conforme {
+  background: #d4edda;
+  color: #155724;
+}
+
+.resultado-badge.observaciones {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.resultado-badge.no-conforme {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.btn-ver-verificacion {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.acciones-configuracion {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn-guardar-config,
+.btn-probar {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-guardar-config {
+  background: #28a745;
+  color: white;
+}
+
+.btn-guardar-config:hover {
+  background: #218838;
+}
+
+.btn-probar {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-probar:hover {
+  background: #138496;
+}
+
+
+
+.accion-descripcion {
+  flex-grow: 1;
+  margin-left: 1rem;
+  color: #495057;
+}
+
+.accion-item.critica .accion-descripcion {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.accion-item.advertencia .accion-descripcion {
+  color: #ffc107;
+  font-weight: 500;
+}
+
+.accion-item.informativa .accion-descripcion {
+  color: #17a2b8;
+}
+
+.sin-acciones {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard h2 {
+    font-size: 24px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .stat-card {
+    padding: 20px;
+  }
+  
+  .stat-icon {
+    font-size: 36px;
+    margin-right: 15px;
+  }
+  
+  .stat-number {
+    font-size: 28px;
+  }
+  
+
+  
+  .categories-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .dashboard-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .filtros-container {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .estadisticas {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  table {
+    font-size: 12px;
+  }
+  
+  th, td {
+    padding: 6px 4px;
+  }
+  
+  .detalles-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 10% auto;
+  }
+  
+  .btn-ver, .btn-editar, .btn-eliminar {
+    padding: 4px 8px;
+    font-size: 10px;
+    margin: 1px;
+  }
+  
+  .equipo-atencion-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* Estilos para el Dashboard */
+.dashboard-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #ecf0f1;
+}
+
+.btn-reporte-dashboard,
+.btn-actualizar-dashboard {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.btn-reporte-dashboard:hover,
+.btn-actualizar-dashboard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+/* Estilo base para botones de acción */
+.btn-accion {
+    color: white;
+    border: none;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    cursor: pointer;
+    margin-right: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-size: 0.75rem;
+    transition: var(--transition);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    opacity: 0.9;
+}
+
+/* Variantes de color para botones */
+.btn-accion.editar {
+    background-color: var(--btn-editar-color);
+}
+
+.btn-accion.editar:hover {
+    background-color: #00E676;
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-accion.clonar {
+    background-color: var(--btn-clonar-color);
+}
+
+.btn-accion.clonar:hover {
+    background-color: #FFEA00;
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-accion.eliminar {
+    background-color: var(--btn-eliminar-color);
+}
+
+.btn-accion.eliminar:hover {
+    background-color: #FF6E40;
+    box-shadow: var(--shadow-lg);
+}
+.btn-actualizar-dashboard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.btn-actualizar-dashboard {
+  background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+}
+
+/* Estilos para la sección de alertas */
+.alerts-section {
+    width: 100%;
+    max-width: 1600px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background: var(--bg-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Encabezado de la sección */
+.alerts-section h3 {
+    font-size: 1.75rem;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-color);
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Grid para las tarjetas de alerta */
+.alerts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+/* Tarjeta de alerta base */
+.alert-card {
+    position: relative;
+    background: var(--bg-white);
+    padding: 1.75rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    transition: all 0.3s ease;
+    border-left: 5px solid transparent;
+    overflow: hidden;
+}
+
+.alert-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 100%);
+    z-index: 0;
+}
+
+.alert-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Icono de la alerta */
+.alert-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+    z-index: 1;
+    flex-shrink: 0;
+    height: 60px;
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.85);
+}
+
+/* Contenido de la alerta */
+.alert-content {
+    flex-grow: 1;
+    z-index: 1;
+}
+
+/* Número/contador de la alerta */
+.alert-number {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-dark);
+}
+
+/* Etiqueta de la alerta */
+.alert-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Variantes de tarjetas de alerta */
+.alert-card.garantia-vigente {
+    background-color: rgba(40, 167, 69, 0.05);
+    border-left-color: var(--success-color);
+}
+.alert-card.garantia-vigente .alert-icon {
+    color: var(--success-color);
+}
+.alert-card.garantia-vigente:hover {
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.15);
+}
+
+.alert-card.garantia-vencida {
+    background-color: rgba(220, 53, 69, 0.05);
+    border-left-color: var(--danger-color);
+}
+.alert-card.garantia-vencida .alert-icon {
+    color: var(--danger-color);
+}
+.alert-card.garantia-vencida:hover {
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.15);
+}
+
+.alert-card.garantia-por-vencer {
+    background-color: rgba(255, 193, 7, 0.05);
+    border-left-color: var(--warning-color);
+}
+.alert-card.garantia-por-vencer .alert-icon {
+    color: var(--warning-color);
+}
+.alert-card.garantia-por-vencer:hover {
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.15);
+}
+
+.alert-card.gestion-contrato {
+    background-color: rgba(23, 162, 184, 0.05);
+    border-left-color: var(--info-color);
+}
+.alert-card.gestion-contrato .alert-icon {
+    color: var(--info-color);
+}
+.alert-card.gestion-contrato:hover {
+    box-shadow: 0 8px 25px rgba(23, 162, 184, 0.15);
+}
+
+.alert-card.equipos-baja {
+    background-color: rgba(108, 117, 125, 0.05);
+    border-left-color: var(--neutral-color);
+}
+.alert-card.equipos-baja .alert-icon {
+    color: var(--neutral-color);
+}
+.alert-card.equipos-baja:hover {
+    box-shadow: 0 8px 25px rgba(108, 117, 125, 0.15);
+}
+
+/* Estilos mejorados para títulos de secciones */
+.dashboard h2,
+.alerts-section h3, 
+.categories-section h3,
+.verification-module h2,
+.verificacion-section h2,
+.registro-section h2,
+.historial-verificaciones h3,
+.section-title,
+.section-header {
+    position: relative;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
+    text-align: left;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    border-bottom: none;
+}
+
+/* Línea decorativa debajo del título */
+.dashboard h2::after,
+.alerts-section h3::after,
+.categories-section h3::after,
+.verification-module h2::after,
+.verificacion-section h2::after,
+.registro-section h2::after,
+.historial-verificaciones h3::after,
+.section-title::after,
+.section-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        var(--primary-color) 0%, 
+        var(--primary-color) 60%, 
+        transparent 100%);
+    border-radius: 3px;
+}
+
+/* Ícono decorativo antes del título */
+.dashboard h2::before,
+.alerts-section h3::before,
+.categories-section h3::before,
+.verification-module h2::before,
+.verificacion-section h2::before,
+.registro-section h2::before,
+.historial-verificaciones h3::before,
+.section-title::before,
+.section-header::before {
+    content: "■";
+    color: var(--secondary-color);
+    margin-right: 12px;
+    font-size: 1.25rem;
+}
+
+/* Estilos para el título principal */
+h1.app-title, 
+.container > h1:first-child {
+    position: relative;
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--primary-color);
+    text-align: center;
+    padding: 1.75rem 1.5rem;
+    margin: 0 auto 2.5rem;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(240,248,255,0.9) 100%);
+    border-bottom: 1px solid rgba(0, 120, 215, 0.2);
+    max-width: 1600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 0 0 12px 12px;
+}
+
+/* Decoración del título con iconos médicos */
+h1.app-title::before,
+.container > h1:first-child::before {
+    content: "⚕";  /* Símbolo médico */
+    font-size: 1.8rem;
+    margin-right: 0.75rem;
+    color: var(--secondary-color);
+    text-shadow: 0 2px 4px rgba(0, 150, 136, 0.2);
+    animation: pulse 3s infinite ease-in-out;
+}
+
+h1.app-title::after,
+.container > h1:first-child::after {
+    content: "⚕";  /* Símbolo médico */
+    font-size: 1.8rem;
+    margin-left: 0.75rem;
+    color: var(--secondary-color);
+    text-shadow: 0 2px 4px rgba(0, 150, 136, 0.2);
+    animation: pulse 3s infinite ease-in-out;
+    animation-delay: 1.5s;
+}
+
+/* Línea inferior decorativa */
+h1.app-title span,
+.container > h1:first-child span {
+    position: relative;
+    z-index: 1;
+}
+
+h1.app-title span::after,
+.container > h1:first-child span::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, 
+        rgba(0, 120, 215, 0) 0%,
+        rgba(0, 120, 215, 0.8) 20%, 
+        rgba(0, 120, 215, 0.8) 80%, 
+        rgba(0, 120, 215, 0) 100%);
+    border-radius: 4px;
+}
+
+/* Animación de pulso para los íconos */
+@keyframes pulse {
+    0% { opacity: 0.7; transform: scale(0.97); }
+    50% { opacity: 1; transform: scale(1.03); }
+    100% { opacity: 0.7; transform: scale(0.97); }
+}
+
+/* Estilos para la sección de registro de equipos */
+.registro-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin: 1rem 0 2rem;
+}
+
+/* Botón para mostrar/ocultar formulario */
+#btn-toggle-form {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+#btn-toggle-form:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    background-color: #0056b3;
+}
+
+/* Contenedor del formulario de registro */
+#form-equipo-container {
+    display: none;
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    background-color: var(--gray-50);
+    animation: slideDown 0.4s ease;
+}
+
+#form-equipo-container.visible {
+    display: block;
+}
+
+/* Contenedor de equipos registrados */
+.equipos-registrados-container {
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+}
+
+/* Títulos de las secciones */
+.form-section-title,
+.table-section-title {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+/* Animación para mostrar/ocultar formulario */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Separación entre formulario y tabla cuando ambos están visibles */
+#form-equipo-container + .equipos-registrados-container {
+    margin-top: 2.5rem;
+    border-top: 1px solid var(--gray-300);
+    padding-top: 2rem;
+}
+
+/* Estilos corregidos para el modal y overlay */
+.modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: transparent !important; /* Overlay completamente transparente */
+    display: none !important;
+    z-index: 9999 !important; /* Valor muy alto para estar seguro */
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.modal-overlay.active {
+    display: flex !important;
+}
+
+.modal-container {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    background-color: white !important;
+    width: 90% !important;
+    max-width: 900px !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    border-radius: 12px !important;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3) !important;
+    padding: 2.5rem !important;
+    z-index: 10000 !important; /* Mayor que el overlay */
+    border: 1px solid var(--primary-color) !important;
+    margin: 0 !important; /* Sin márgenes */
+    box-sizing: border-box !important; /* Para que el padding no aumente el tamaño */
+}
+
+.btn-cancelar {
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    background-color: var(--danger-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 20px !important;
+    line-height: 1 !important; /* Alineación vertical */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 10001 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Ocultar completamente el key hint */
+.key-hint {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}

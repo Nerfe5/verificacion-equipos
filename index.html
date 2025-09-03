@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sistema de Gestión de Equipos Médicos</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles-modal.css" />
+</head>
+<body>
+    <div class="container">
+        <!-- Encabezado principal de la aplicación -->
+        <h1 class="app-title"><span>Sistema de Gestión de Equipamiento Médico</span></h1>
+
+        <!-- SECCIÓN: DASHBOARD -->
+        <section id="dashboard" class="dashboard">
+            <h2>Dashboard - Vista General</h2>
+            
+            <!-- Estadísticas Principales -->
+            <div class="stats-grid">
+                <div class="stat-card total">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="total-equipos">0</div>
+                        <div class="stat-label">Total de Equipos</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card operativo">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="equipos-operativos">0</div>
+                        <div class="stat-label">Operativos</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card mantenimiento">
+                    <div class="stat-icon">🔧</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="equipos-mantenimiento">0</div>
+                        <div class="stat-label">En Mantenimiento</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card fuera-servicio">
+                    <div class="stat-icon">❌</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="equipos-fuera-servicio">0</div>
+                        <div class="stat-label">Fuera de Servicio</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: ALERTAS Y NOTIFICACIONES -->
+        <section class="alerts-section">
+            <h3>Alertas y Notificaciones</h3>
+            <div class="alerts-grid">
+                <div class="alert-card garantia-vigente">
+                    <div class="alert-icon">✅</div>
+                    <div class="alert-content">
+                        <div class="alert-number" id="garantias-vigentes">0</div>
+                        <div class="alert-label">Garantías Vigentes</div>
+                    </div>
+                </div>
+
+                <div class="alert-card garantia-vencida">
+                    <div class="alert-icon">⚠️</div>
+                    <div class="alert-content">
+                        <div class="alert-number" id="garantias-vencidas">0</div>
+                        <div class="alert-label">Garantías Vencidas</div>
+                    </div>
+                </div>
+                
+                <div class="alert-card garantia-por-vencer">
+                    <div class="alert-icon">🔔</div>
+                    <div class="alert-content">
+                        <div class="alert-number" id="garantias-por-vencer">0</div>
+                        <div class="alert-label">Por Vencer (6 meses)</div>
+                    </div>
+                </div>
+                
+                <div class="alert-card gestion-contrato">
+                    <div class="alert-icon">📋</div>
+                    <div class="alert-content">
+                        <div class="alert-number" id="gestion-contrato-consolidado">0</div>
+                        <div class="alert-label">Gestión de Contrato</div>
+                    </div>
+                </div>
+
+                <div class="alert-card equipos-baja">
+                    <div class="alert-icon">📤</div>
+                    <div class="alert-content">
+                        <div class="alert-number" id="equipos-baja">0</div>
+                        <div class="alert-label">Dados de Baja</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: DISTRIBUCIÓN POR CATEGORÍAS -->
+        <section class="categories-section">
+            <h3>Distribución por Categorías</h3>
+            <div class="categories-grid">
+                <div class="category-card alta-tecnologia">
+                    <div class="category-bar">
+                        <div class="category-fill" id="bar-alta-tecnologia"></div>
+                    </div>
+                    <div class="category-info">
+                        <span class="category-name">Alta Tecnología</span>
+                        <span class="category-count" id="count-alta-tecnologia">0</span>
+                    </div>
+                </div>
+                
+                <div class="category-card soporte-vida">
+                    <div class="category-bar">
+                        <div class="category-fill" id="bar-soporte-vida"></div>
+                    </div>
+                    <div class="category-info">
+                        <span class="category-name">Soporte de Vida</span>
+                        <span class="category-count" id="count-soporte-vida">0</span>
+                    </div>
+                </div>
+                
+                <div class="category-card critico">
+                    <div class="category-bar">
+                        <div class="category-fill" id="bar-critico"></div>
+                    </div>
+                    <div class="category-info">
+                        <span class="category-name">Crítico</span>
+                        <span class="category-count" id="count-critico">0</span>
+                    </div>
+                </div>
+                
+                <div class="category-card general">
+                    <div class="category-bar">
+                        <div class="category-fill" id="bar-general"></div>
+                    </div>
+                    <div class="category-info">
+                        <span class="category-name">General</span>
+                        <span class="category-count" id="count-general">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de Acción del Dashboard -->
+            <div class="dashboard-actions">
+                <button id="generar-reporte-dashboard" class="btn-reporte-dashboard">
+                    📊 Generar Reporte Dashboard
+                </button>
+                <button id="actualizar-dashboard" class="btn-actualizar-dashboard">
+                    🔄 Actualizar Dashboard
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- SECCIÓN: MÓDULO DE VERIFICACIÓN DIARIA -->
+    <div class="main-content">
+        <section id="modulo-verificacion" class="verificacion-section">
+            <h2 class="section-title">Verificación Diaria de Equipos</h2>
+        
+            <!-- Selector de Equipo para Verificar -->
+            <div class="selector-equipo">
+                <h3>Seleccionar Equipo para Verificación</h3>
+                <div class="equipo-selector-container">
+                    <div class="selector-grupo">
+                        <label for="equipo-verificar">Equipo:</label>
+                        <select id="equipo-verificar">
+                            <option value="">Seleccionar equipo...</option>
+                        </select>
+                    </div>
+                    <div class="selector-grupo">
+                        <label for="responsable-verificacion">Responsable:</label>
+                        <input type="text" id="responsable-verificacion" placeholder="Nombre del verificador" required />
+                    </div>
+                    <div class="selector-grupo">
+                        <button id="iniciar-verificacion" class="btn-iniciar-verificacion">🔍 Iniciar Verificación</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de Verificación (oculto por defecto) -->
+            <div id="formulario-verificacion" class="formulario-verificacion" style="display: none;">
+                <div class="info-equipo-verificacion">
+                    <h3 id="nombre-equipo-verificacion"></h3>
+                    <div class="datos-equipo-verificacion">
+                        <span id="ubicacion-equipo-verificacion"></span> | 
+                        <span id="categoria-equipo-verificacion"></span> | 
+                        <span id="serie-equipo-verificacion"></span>
+                    </div>
+                </div>
+
+                <form id="form-verificacion">
+                    <div id="checklist-container" class="checklist-container">
+                        <!-- Se llenará dinámicamente con el checklist -->
+                    </div>
+
+                    <div class="observaciones-verificacion">
+                        <label for="observaciones-verificacion">Observaciones de la Verificación:</label>
+                        <textarea id="observaciones-verificacion" rows="4" placeholder="Observaciones generales, problemas encontrados, recomendaciones..."></textarea>
+                    </div>
+
+                    <div class="resultado-verificacion">
+                        <label for="resultado-general">Resultado General:</label>
+                        <select id="resultado-general" required>
+                            <option value="">Seleccionar resultado...</option>
+                            <option value="conforme">✅ Conforme - Equipo operativo</option>
+                            <option value="observaciones">⚠️ Con observaciones - Requiere atención</option>
+                            <option value="no-conforme">❌ No conforme - Requiere intervención inmediata</option>
+                        </select>
+                    </div>
+
+                    <div class="acciones-verificacion">
+                        <button type="submit" class="btn-guardar-verificacion">💾 Guardar Verificación</button>
+                        <button type="button" id="cancelar-verificacion" class="btn-cancelar-verificacion">❌ Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Historial de Verificaciones -->
+            <div class="historial-verificaciones">
+                <h3>Historial de Verificaciones Recientes</h3>
+                <div class="filtros-historial">
+                    <select id="filtro-equipo-historial">
+                        <option value="">Todos los equipos</option>
+                    </select>
+                    <select id="filtro-resultado-historial">
+                        <option value="">Todos los resultados</option>
+                        <option value="conforme">Conformes</option>
+                        <option value="observaciones">Con observaciones</option>
+                        <option value="no-conforme">No conformes</option>
+                    </select>
+                    <input type="date" id="filtro-fecha-desde" placeholder="Fecha desde">
+                    <input type="date" id="filtro-fecha-hasta" placeholder="Fecha hasta">
+                    <button id="aplicar-filtros-historial" class="btn-aplicar-filtros">Filtrar</button>
+                    <button id="exportar-verificaciones" class="btn-exportar">📊 Exportar CSV</button>
+                </div>
+                
+                <div class="table-container">
+                    <table id="tabla-verificaciones">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Equipo</th>
+                                <th>Ubicación</th>
+                                <th>Responsable</th>
+                                <th>Resultado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Se llenará dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: REGISTRO DE EQUIPOS -->
+        <!-- Estructura mínima necesaria -->
+        <section id="seccion-registro" class="registro-section">
+            <h2>Gestión de Equipos</h2>
+            
+            <!-- Botón para mostrar/ocultar el formulario -->
+            <div class="registro-actions">
+                <button id="btn-toggle-form" class="btn btn-primary">
+                    <span class="btn-icon">➕</span> Registrar Nuevo Equipo
+                </button>
+            </div>
+
+            <!-- Contenedor del formulario (oculto por defecto) -->
+            <div id="form-equipo-container" style="display: none;">
+                <form id="form-equipo">
+                    <!-- Información Básica -->
+                    <fieldset>
+                        <legend>Información Básica</legend>
+                        
+                        <label for="nombre">Nombre del Equipo:</label>
+                        <input type="text" id="nombre" required />
+
+                        <label for="marca">Marca:</label>
+                        <input type="text" id="marca" required />
+
+                        <label for="modelo">Modelo:</label>
+                        <input type="text" id="modelo" required />
+
+                        <label for="serie">No. de Serie:</label>
+                        <input type="text" id="serie" required />
+
+                        <label for="categoria">Categoría:</label>
+                        <select id="categoria" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="alta-tecnologia">Alta Tecnología</option>
+                            <option value="soporte-vida">Soporte de Vida</option>
+                            <option value="critico">Crítico</option>
+                            <option value="general">General</option>
+                        </select>
+
+                        <label for="estado">Estado del Equipo:</label>
+                        <select id="estado" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="operativo">Operativo</option>
+                            <option value="mantenimiento">En Mantenimiento</option>
+                            <option value="fuera-servicio">Fuera de Servicio</option>
+                            <option value="en-calibracion">En Calibración</option>
+                            <option value="baja">Dado de Baja</option>
+                        </select>
+
+                        <label for="elegibleContratoConsolidado">Elegible para Contrato Consolidado:</label>
+                        <select id="elegibleContratoConsolidado" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </fieldset>
+
+                    <!-- Ubicación y Responsable -->
+                    <fieldset>
+                        <legend>Ubicación y Responsable</legend>
+                        
+                        <label for="ubicacion">Ubicación:</label>
+                        <input type="text" id="ubicacion" required placeholder="Ej: UCI - Cama 01" />
+
+                        <label for="responsable">Responsable del Equipo:</label>
+                        <input type="text" id="responsable" placeholder="Nombre del responsable" />
+
+                        <label for="departamento">Departamento:</label>
+                        <input type="text" id="departamento" placeholder="Ej: Cuidados Intensivos" />
+                    </fieldset>
+
+                    <!-- Información Comercial -->
+                    <fieldset>
+                        <legend>Información Comercial</legend>
+                        
+                        <label for="proveedor">Proveedor:</label>
+                        <input type="text" id="proveedor" required />
+
+                        <label for="numero-contrato">Número de Contrato:</label>
+                        <input type="text" id="numero-contrato" required />
+
+                        <label for="fecha-compra">Fecha de Compra:</label>
+                        <input type="date" id="fecha-compra" required />
+
+                        <label for="fecha-garantia">Fecha de Vencimiento Garantía:</label>
+                        <input type="date" id="fecha-garantia" />
+
+                        <label for="costo">Costo/Valor (MXN):</label>
+                        <input type="number" id="costo" step="0.01" min="0" placeholder="0.00" />
+                    </fieldset>
+
+                    <!-- Documentación -->
+                    <fieldset>
+                        <legend>Documentación</legend>
+                        
+                        <label for="imagen">Imagen del equipo (URL):</label>
+                        <input type="url" id="imagen" placeholder="http://..." />
+
+                        <label for="manual">Manual/Documentación (URL):</label>
+                        <input type="url" id="manual" placeholder="http://..." />
+
+                        <label for="observaciones">Observaciones:</label>
+                        <textarea id="observaciones" rows="3" placeholder="Observaciones adicionales..."></textarea>
+                    </fieldset>
+
+                    <button type="submit">Registrar Equipo</button>
+                </form>
+            </div>
+
+            <!-- Sección siempre visible: Tabla y filtros -->
+            <div class="equipos-registrados-container">
+                <h3 class="table-section-title">Equipos Registrados</h3>
+                
+                <!-- Panel de Filtros y Búsqueda -->
+                <div class="panel-filtros">
+                    <!-- Contadores -->
+                    <div class="filtros-contador-container">
+                        <span class="contador-equipos" id="contador-equipos">Total: 0 equipos</span>
+                        <span class="contador-equipos" id="contador-filtrados">Filtrados: 0</span>
+                    </div>
+                    
+                    <!-- Filtros -->
+                    <div class="filtros-container">
+                        <div class="filtro-grupo">
+                            <label for="buscar-texto">Buscar:</label>
+                            <input type="text" id="buscar-texto" placeholder="Nombre, marca, serie, ubicación..." />
+                        </div>
+                        
+                        <div class="filtro-grupo">
+                            <label for="filtro-estado">Estado:</label>
+                            <select id="filtro-estado">
+                                <option value="">Todos los estados</option>
+                                <option value="operativo">Operativo</option>
+                                <option value="mantenimiento">En Mantenimiento</option>
+                                <option value="fuera-servicio">Fuera de Servicio</option>
+                                <option value="en-calibracion">En Calibración</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filtro-grupo">
+                            <label for="filtro-categoria">Categoría:</label>
+                            <select id="filtro-categoria">
+                                <option value="">Todas las categorías</option>
+                                <option value="alta-tecnologia">Alta Tecnología</option>
+                                <option value="soporte-vida">Soporte de Vida</option>
+                                <option value="critico">Crítico</option>
+                                <option value="general">General</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filtro-grupo">
+                            <label for="filtro-garantia">Garantía:</label>
+                            <select id="filtro-garantia">
+                                <option value="">Todas</option>
+                                <option value="vigente">Garantía Vigente</option>
+                                <option value="por-vencer">Por Vencer (6 meses)</option>
+                                <option value="vencida">Garantía Vencida</option>
+                                <option value="contrato-consolidado">Elegible Contrato Consolidado</option>
+                                <option value="baja">Dado de Baja</option>
+                                <option value="sin-garantia">Sin Garantía</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Botones -->
+                    <div class="filtros-botones-container">
+                        <button class="btn-limpiar">Limpiar Filtros</button>
+                        <button class="btn-exportar">Exportar CSV</button>
+                    </div>
+                </div>
+
+                <!-- Tabla de equipos -->
+                <div class="table-container">
+                    <table id="tabla-equipos">
+                        <thead>
+                            <tr>
+                                <th>Serie</th>
+                                <th>Nombre</th>
+                                <th>Marca/Modelo</th>
+                                <th>Ubicación</th>
+                                <th>Estado</th>
+                                <th>Categoría</th>
+                                <th>Responsable</th>
+                                <th>Proveedor</th>
+                                <th>Garantía</th>
+                                <th>Imagen</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Se llena dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+  
+    <!-- Modal para edición/clonación -->
+    <div id="modal-form" class="modal-overlay">
+        <div class="modal-container">
+            <h2 class="modal-title">Registrar Equipo</h2>
+            <div class="modal-body">
+                <!-- El formulario se moverá aquí dinámicamente -->
+            </div>
+            <button type="button" id="btn-cancelar-modal" class="btn-cancelar">×</button>
+        </div>
+    </div>
+    
+    <div id="key-hint" class="key-hint">
+        Presiona ESC para cancelar
+    </div>
+  
+    <script src="main.js"></script>
+</body>
+</html>
+
+
+
