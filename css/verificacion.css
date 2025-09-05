@@ -1,0 +1,503 @@
+/* Estilos específicos para el módulo de verificación diaria
+   Con selectores específicos para evitar conflictos con otras secciones */
+
+/* ===== CONTENEDOR PRINCIPAL DE VERIFICACIÓN ===== */
+.verificacion-section {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.verificacion-section .section-title {
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+/* ===== SELECTOR DE EQUIPO PARA VERIFICACIÓN ===== */
+.verificacion-section .selector-equipo {
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.verificacion-section .selector-equipo h3 {
+  color: #2c3e50;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.verificacion-section .equipo-selector-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+.verificacion-section .selector-grupo {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 10px;
+}
+
+.verificacion-section .selector-grupo label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+  font-weight: 500;
+}
+
+.verificacion-section .selector-grupo select,
+.verificacion-section .selector-grupo input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: border 0.3s ease;
+}
+
+.verificacion-section .selector-grupo select:focus,
+.verificacion-section .selector-grupo input:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Botón de iniciar verificación con estilo específico */
+.verificacion-section .btn-iniciar-verificacion {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.verificacion-section .btn-iniciar-verificacion:hover {
+  background-color: #218838;
+}
+
+.verificacion-section .btn-iniciar-verificacion:active {
+  transform: translateY(1px);
+}
+
+/* ===== FORMULARIO DE VERIFICACIÓN ===== */
+.verificacion-section .formulario-verificacion {
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding: 20px;
+  margin-top: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Información del equipo en la parte superior del formulario */
+.verificacion-section .info-equipo-verificacion {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.verificacion-section .info-equipo-verificacion h3 {
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+}
+
+.verificacion-section .datos-equipo-verificacion {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Checklist de verificación */
+.verificacion-section .checklist-container {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.verificacion-section .checklist-item {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #e9ecef;
+}
+
+.verificacion-section .checklist-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.verificacion-section .checklist-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.verificacion-section .checklist-checkbox {
+  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* Campo de observaciones */
+.verificacion-section .observaciones-verificacion {
+  margin-bottom: 20px;
+}
+
+.verificacion-section .observaciones-verificacion label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: 500;
+}
+
+.verificacion-section .observaciones-verificacion textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.verificacion-section .observaciones-verificacion textarea:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Selector de resultado general */
+.verificacion-section .resultado-verificacion {
+  margin-bottom: 20px;
+}
+
+.verificacion-section .resultado-verificacion label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: 500;
+}
+
+.verificacion-section .resultado-verificacion select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  background-color: white;
+}
+
+.verificacion-section .resultado-verificacion select:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Botones del formulario de verificación */
+.verificacion-section .acciones-verificacion {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.verificacion-section .btn-guardar-verificacion {
+  flex: 1;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.verificacion-section .btn-guardar-verificacion:hover {
+  background-color: #2980b9;
+}
+
+.verificacion-section .btn-cancelar-verificacion {
+  flex: 1;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.verificacion-section .btn-cancelar-verificacion:hover {
+  background-color: #5a6268;
+}
+
+/* ===== HISTORIAL DE VERIFICACIONES ===== */
+.verificacion-section .historial-verificaciones {
+  margin-top: 30px;
+}
+
+.verificacion-section .historial-verificaciones h3 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+/* Filtros del historial */
+.verificacion-section .filtros-historial {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.verificacion-section .filtros-historial select,
+.verificacion-section .filtros-historial input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  flex-grow: 1;
+  min-width: 120px;
+}
+
+.verificacion-section .btn-aplicar-filtros {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.verificacion-section .btn-aplicar-filtros:hover {
+  background-color: #5a6268;
+}
+
+.verificacion-section .btn-exportar {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.verificacion-section .btn-exportar:hover {
+  background-color: #138496;
+}
+
+/* Tabla de verificaciones */
+.verificacion-section .table-container {
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  margin-top: 15px;
+}
+
+.verificacion-section table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.verificacion-section th {
+  text-align: left;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e9ecef;
+  color: #495057;
+  font-weight: 600;
+}
+
+.verificacion-section td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e9ecef;
+  color: #212529;
+}
+
+.verificacion-section tr:last-child td {
+  border-bottom: none;
+}
+
+.verificacion-section tr:hover td {
+  background-color: #f8f9fa;
+}
+
+.verificacion-section .btn-ver-detalle {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.verificacion-section .btn-ver-detalle:hover {
+  background-color: #5a6268;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .verificacion-section .equipo-selector-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .verificacion-section .selector-grupo {
+    width: 100%;
+  }
+  
+  .verificacion-section .acciones-verificacion {
+    flex-direction: column;
+  }
+  
+  .verificacion-section .filtros-historial {
+    flex-direction: column;
+  }
+}
+
+/* ===== ESTADOS DE RESULTADOS ===== */
+.verificacion-section .estado-conforme {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.verificacion-section .estado-observaciones {
+  color: #ffc107;
+  font-weight: 500;
+}
+
+.verificacion-section .estado-no-conforme {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+/* ===== MODAL DE DETALLE DE VERIFICACIÓN ===== */
+.verificacion-detalle-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.verificacion-detalle-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.verificacion-detalle-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-20px);
+  transition: transform 0.3s ease;
+}
+
+.verificacion-detalle-modal.active .verificacion-detalle-content {
+  transform: translateY(0);
+}
+
+.verificacion-detalle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.verificacion-detalle-header h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.verificacion-detalle-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.verificacion-detalle-info {
+  margin-bottom: 20px;
+}
+
+.verificacion-detalle-info p {
+  margin: 5px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.verificacion-detalle-info span:first-child {
+  font-weight: 500;
+  color: #495057;
+}
+
+.verificacion-detalle-items {
+  margin-bottom: 20px;
+}
+
+.verificacion-detalle-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed #e9ecef;
+}
+
+.verificacion-detalle-item:last-child {
+  border-bottom: none;
+}
+
+.verificacion-detalle-item-check {
+  margin-right: 10px;
+  color: #28a745;
+}
+
+.verificacion-detalle-item-uncheck {
+  margin-right: 10px;
+  color: #dc3545;
+}
