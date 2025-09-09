@@ -7,10 +7,14 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="styles-modal.css" />
     <!-- Estilos existentes -->
-    <link rel="stylesheet" href="css/main.css">
+    
     
     <!-- Nuevo archivo de estilos para la sección de verificación -->
     <link rel="stylesheet" href="css/verificacion.css">
+    
+    <!-- Añadir jsPDF para generación de PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -186,40 +190,39 @@
             </div>
 
             <!-- Formulario de Verificación (oculto por defecto) -->
-            <div id="formulario-verificacion" class="formulario-verificacion" style="display: none;">
+            <div class="formulario-verificacion" id="formulario-verificacion" style="display: none;">
                 <div class="info-equipo-verificacion">
-                    <h3 id="nombre-equipo-verificacion"></h3>
-                    <div class="datos-equipo-verificacion">
-                        <span id="ubicacion-equipo-verificacion"></span> | 
-                        <span id="categoria-equipo-verificacion"></span> | 
-                        <span id="serie-equipo-verificacion"></span>
+                    <h3 id="titulo-equipo-verificacion"></h3>
+                    <div class="datos-equipo-verificacion" id="datos-equipo-verificacion"></div>
+                    <div class="acciones-info-equipo">
+                        <button id="btn-generar-pdf-equipo" class="btn-generar-pdf">
+                            <span class="btn-icon">📄</span> Generar PDF
+                        </button>
                     </div>
                 </div>
-
+                
+                <!-- Importante: este contenedor debe existir -->
+                <div class="checklist-container" id="checklist-container"></div>
+                
                 <form id="form-verificacion">
-                    <div id="checklist-container" class="checklist-container">
-                        <!-- Se llenará dinámicamente con el checklist -->
-                    </div>
-
                     <div class="observaciones-verificacion">
-                        <label for="observaciones-verificacion">Observaciones de la Verificación:</label>
-                        <textarea id="observaciones-verificacion" placeholder="Escriba aquí cualquier observación sobre el estado del equipo..."></textarea>
+                        <label for="observaciones-verificacion">Observaciones:</label>
+                        <textarea id="observaciones-verificacion" placeholder="Ingrese observaciones relevantes..."></textarea>
                     </div>
-
+                    
                     <div class="resultado-verificacion">
-                        <label for="resultado-general">Resultado de la Verificación:</label>
-                        <select id="resultado-general">
+                        <label for="resultado-general">Resultado General:</label>
+                        <select id="resultado-general" required>
                             <option value="">Seleccione un resultado...</option>
                             <option value="conforme">✅ Conforme</option>
                             <option value="observaciones">⚠️ Con observaciones</option>
                             <option value="no-conforme">❌ No conforme</option>
                         </select>
                     </div>
-
-                    <!-- Botones de acción -->
+                    
                     <div class="acciones-verificacion">
-                        <button type="submit" class="btn-guardar-verificacion">Guardar Verificación</button>
                         <button type="button" id="cancelar-verificacion" class="btn-cancelar-verificacion">Cancelar</button>
+                        <button type="submit" class="btn-guardar-verificacion">Guardar Verificación</button>
                     </div>
                 </form>
             </div>
@@ -240,6 +243,9 @@
                     <input type="date" id="filtro-fecha-desde" placeholder="Fecha desde">
                     <input type="date" id="filtro-fecha-hasta" placeholder="Fecha hasta">
                     <button id="aplicar-filtros-historial" class="btn-aplicar-filtros">Filtrar</button>
+                    <button id="limpiar-filtros-historial" class="btn-limpiar-filtros">
+                        <span class="btn-icon">🧹</span> Limpiar Filtros
+                    </button>
                     <button id="exportar-verificaciones" class="btn-exportar">📊 Exportar CSV</button>
                 </div>
                 
