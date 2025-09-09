@@ -249,6 +249,36 @@
   background-color: #5a6268;
 }
 
+/* Estilo para el botón limpiar filtros */
+.verificacion-section .btn-limpiar-filtros {
+  background-color: #fd7e14; /* Nuevo color naranja */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.verificacion-section .btn-limpiar-filtros:hover {
+  background-color: #e8700a; /* Color naranja más oscuro para hover */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.verificacion-section .btn-limpiar-filtros:active {
+  transform: translateY(0px);
+}
+
+.verificacion-section .btn-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
 /* ===== HISTORIAL DE VERIFICACIONES ===== */
 .verificacion-section .historial-verificaciones {
   margin-top: 30px;
@@ -319,12 +349,22 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
   margin-top: 15px;
+  /* Nueva altura limitada con scroll vertical */
+  height: 350px; /* Altura aproximada para mostrar 6 filas */
+  overflow-y: auto;
 }
 
 .verificacion-section table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.9rem;
+}
+
+.verificacion-section thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .verificacion-section th {
@@ -340,6 +380,7 @@
   padding: 10px 12px;
   border-bottom: 1px solid #e9ecef;
   color: #212529;
+  text-align: left;
 }
 
 .verificacion-section tr:last-child td {
@@ -350,19 +391,61 @@
   background-color: #f8f9fa;
 }
 
-.verificacion-section .btn-ver-detalle {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 5px 10px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+/* Estilos para contener los botones de acción */
+.acciones-container {
+    min-width: 120px;
 }
 
-.verificacion-section .btn-ver-detalle:hover {
-  background-color: #5a6268;
+.btn-acciones {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+    justify-content: flex-start;
+}
+
+.btn-ver-detalle, .btn-pdf-verificacion, .btn-duplicar-verificacion, .btn-eliminar-verificacion {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-ver-detalle { background-color: #3498db; color: white; }
+.btn-pdf-verificacion { background-color: #e74c3c; color: white; }
+.btn-duplicar-verificacion { background-color: #2ecc71; color: white; }
+.btn-eliminar-verificacion { background-color: #95a5a6; color: white; }
+
+.btn-ver-detalle:hover, 
+.btn-pdf-verificacion:hover, 
+.btn-duplicar-verificacion:hover,
+.btn-eliminar-verificacion:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+/* Mejorar apariencia del scroll */
+.verificacion-section .table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.verificacion-section .table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.verificacion-section .table-container::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 4px;
+}
+
+.verificacion-section .table-container::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -500,4 +583,379 @@
 .verificacion-detalle-item-uncheck {
   margin-right: 10px;
   color: #dc3545;
+}
+
+/* Alinear contenido de la tabla de verificaciones */
+#tabla-verificaciones td {
+    text-align: left;
+}
+
+/* Estilo para el botón de generar PDF */
+.verificacion-section .btn-generar-pdf {
+  background-color: #8e44ad; /* Púrpura para distinguirlo */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.verificacion-section .btn-generar-pdf:hover {
+  background-color: #7d3c98;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.verificacion-section .acciones-info-equipo {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+/* Estilo para el botón de PDF en la tabla de verificaciones */
+.verificacion-section .btn-pdf-verificacion {
+  background-color: #8e44ad;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.verificacion-section .btn-pdf-verificacion:hover {
+  background-color: #7d3c98;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Estilo para el botón de duplicar verificación */
+.verificacion-section .btn-duplicar-verificacion {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.verificacion-section .btn-duplicar-verificacion:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Estilo para la celda de acciones para acomodar los tres botones */
+.verificacion-section td:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: flex-start;
+  min-width: 230px;
+}
+
+/* Estilos para el modal de previsualización de PDF */
+.pdf-preview-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  visibility: hidden;
+}
+
+.pdf-preview-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.pdf-preview-content {
+  width: 90%;
+  max-width: 900px;
+  height: 90%;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.pdf-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.pdf-preview-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.pdf-preview-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.pdf-preview-body {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.pdf-preview-body iframe {
+  border: none;
+}
+
+.btn-descargar-pdf {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-descargar-pdf:hover {
+  background-color: #2980b9;
+}
+
+.btn-cerrar-pdf {
+  background-color: transparent;
+  color: #6c757d;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 5px;
+  line-height: 0.8;
+}
+
+.btn-cerrar-pdf:hover {
+  color: #343a40;
+}
+
+/* Estilos para el modal de detalle de verificación */
+.detalle-verificacion-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  visibility: hidden;
+}
+
+.detalle-verificacion-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.detalle-verificacion-content {
+  width: 90%;
+  max-width: 700px;
+  max-height: 90%;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: auto;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+}
+
+.detalle-verificacion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.detalle-verificacion-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.btn-cerrar-detalle {
+  background-color: transparent;
+  color: #6c757d;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 5px;
+  line-height: 0.8;
+}
+
+.btn-cerrar-detalle:hover {
+  color: #343a40;
+}
+
+.detalle-verificacion-body {
+  padding: 20px;
+}
+
+.detalle-verificacion-info {
+  display: flex;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.detalle-verificacion-equipo, .detalle-verificacion-datos {
+  flex: 1;
+  min-width: 250px;
+}
+
+.detalle-verificacion-equipo h4 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.detalle-verificacion-items {
+  margin-bottom: 20px;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.detalle-verificacion-items h4 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.detalle-verificacion-items ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.detalle-verificacion-items li {
+  padding: 5px 0;
+}
+
+.detalle-verificacion-observaciones {
+  margin-bottom: 20px;
+}
+
+.detalle-verificacion-observaciones h4 {
+  color: #2c3e50;
+}
+
+.detalle-verificacion-acciones {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn-pdf-verificacion-detalle, .btn-duplicar-verificacion-detalle {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.btn-pdf-verificacion-detalle {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn-pdf-verificacion-detalle:hover {
+  background-color: #2980b9;
+}
+
+.btn-duplicar-verificacion-detalle {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-duplicar-verificacion-detalle:hover {
+  background-color: #218838;
+}
+
+/* Efecto de resaltado para elementos nuevos o actualizados */
+@keyframes highlight-fade {
+  0% {
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0);
+  }
+  20% {
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0);
+  }
+}
+
+.highlight-effect {
+  animation: highlight-fade 1.5s ease;
+  border-radius: 6px;
+}
+
+/* Indicador de verificación duplicada */
+.duplicacion-indicator {
+  display: flex;
+  align-items: center;
+  background-color: #e8f4fd;
+  border-left: 4px solid #3498db;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.duplicacion-icon {
+  font-size: 1.5rem;
+  margin-right: 12px;
+  color: #3498db;
+}
+
+.duplicacion-text {
+  flex: 1;
+}
+
+.duplicacion-text strong {
+  display: block;
+  color: #2c3e50;
+  margin-bottom: 3px;
+}
+
+.duplicacion-text span {
+  color: #5a6a7a;
+  font-size: 0.9rem;
 }

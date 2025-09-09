@@ -23,8 +23,8 @@ function inicializarModuloVerificacion() {
     // Configurar event listeners
     configurarEventListenersVerificacion();
     
-    // Actualizar tabla de verificaciones
-    actualizarTablaVerificaciones();
+    // Inicializar la tabla de verificaciones
+    inicializarTablaVerificaciones();
     
     console.log('Módulo de verificación inicializado correctamente');
 }
@@ -102,21 +102,21 @@ function cargarEquiposOperativosEnSelector() {
 function configurarEventListenersVerificacion() {
     console.log('Configurando event listeners para verificación...');
     
-    // Botón de iniciar verificación
+    // Botón para iniciar verificación
     const btnIniciarVerificacion = document.getElementById("iniciar-verificacion");
     if (btnIniciarVerificacion) {
         btnIniciarVerificacion.addEventListener("click", iniciarVerificacion);
         console.log('Listener configurado para botón de iniciar verificación');
     }
     
-    // Botón de cancelar verificación
+    // Botón para cancelar verificación
     const btnCancelarVerificacion = document.getElementById("cancelar-verificacion");
     if (btnCancelarVerificacion) {
         btnCancelarVerificacion.addEventListener("click", cancelarVerificacion);
         console.log('Listener configurado para botón de cancelar verificación');
     }
     
-    // Formulario de verificación
+    // Formulario de verificación para guardar
     const formVerificacion = document.getElementById("form-verificacion");
     if (formVerificacion) {
         formVerificacion.addEventListener("submit", function(e) {
@@ -126,316 +126,765 @@ function configurarEventListenersVerificacion() {
         console.log('Listener configurado para formulario de verificación');
     }
     
-    // Filtros de historial
+    // Botón para aplicar filtros de historial
     const btnAplicarFiltros = document.getElementById("aplicar-filtros-historial");
     if (btnAplicarFiltros) {
         btnAplicarFiltros.addEventListener("click", filtrarHistorialVerificaciones);
         console.log('Listener configurado para botón de aplicar filtros');
     }
     
-    // Botón de exportar verificaciones
-    const btnExportar = document.getElementById("exportar-verificaciones");
-    if (btnExportar) {
-        btnExportar.addEventListener("click", exportarVerificacionesCSV);
+    // Botón para exportar verificaciones
+    const btnExportarVerificaciones = document.getElementById("exportar-verificaciones");
+    if (btnExportarVerificaciones) {
+        btnExportarVerificaciones.addEventListener("click", exportarVerificacionesCSV);
         console.log('Listener configurado para botón de exportar verificaciones');
     }
     
-    // Llenar selector de equipos en filtros
-    const filtroEquipo = document.getElementById("filtro-equipo-historial");
-    if (filtroEquipo) {
-        actualizarFiltroEquipos(filtroEquipo);
+    // Botón para limpiar filtros
+    const btnLimpiarFiltros = document.getElementById("limpiar-filtros-historial");
+    if (btnLimpiarFiltros) {
+        btnLimpiarFiltros.addEventListener("click", limpiarFiltrosHistorial);
+        console.log('Listener configurado para botón de limpiar filtros');
+    }
+    
+    // Botón para generar PDF
+    const btnGenerarPDF = document.getElementById("btn-generar-pdf-equipo");
+    if (btnGenerarPDF) {
+        btnGenerarPDF.addEventListener("click", generarPDFEquipo);
+        console.log('Listener configurado para botón de generar PDF');
     }
 }
 
-// ===== FUNCIONES DE VERIFICACIÓN DIARIA =====
-
 /**
- * Inicia el proceso de verificación de un equipo
+ * Genera un PDF con la información del equipo seleccionado (función actualizada)
  */
-function iniciarVerificacion() {
-    console.log('Iniciando proceso de verificación...');
+function generarPDFEquipo() {
+    console.log('Generando PDF del equipo...');
     
-    const selectorEquipos = document.getElementById("equipo-verificar");
-    const responsableInput = document.getElementById("responsable-verificacion");
-    
-    // Validar que se haya seleccionado un equipo y un responsable
-    if (!selectorEquipos.value) {
-        console.error("Debe seleccionar un equipo para verificar");
-        mostrarMensaje("Por favor, seleccione un equipo para verificar", "error");
+    // Obtener el ID del equipo seleccionado
+    const selectorEquipo = document.getElementById("equipo-verificar");
+    if (!selectorEquipo || !selectorEquipo.value) {
+        mostrarMensaje("No hay un equipo seleccionado para generar PDF", "error");
         return;
     }
     
-    if (!responsableInput.value.trim()) {
-        console.error("Debe ingresar un responsable para la verificación");
-        mostrarMensaje("Por favor, ingrese el nombre del responsable de la verificación", "error");
+    const equipoId = selectorEquipo.value;
+    
+    // Buscar el equipo en el array de equipos
+    const equipo = equipos.find(eq => eq.id === equipoId || eq.serie === equipoId);
+    if (!equipo) {
+        mostrarMensaje("No se pudo encontrar la información del equipo", "error");
         return;
     }
     
-    // Obtener el equipo seleccionado
-    const equipoSeleccionadoSerie = selectorEquipos.value;
-    const equipoSelec = equipos.find(equipo => equipo && equipo.serie === equipoSeleccionadoSerie);
+    // Filtrar las verificaciones de este equipo
+    const verificacionesEquipo = verificaciones.filter(v => v.equipoId === equipoId);
     
-    if (!equipoSelec) {
-        console.error(`No se encontró el equipo con serie ${equipoSeleccionadoSerie}`);
-        mostrarMensaje("Error al cargar la información del equipo", "error");
-        return;
-    }
-    
-    console.log("Equipo seleccionado para verificación:", equipoSelec);
-    console.log("Responsable de verificación:", responsableInput.value);
-    
-    // Mostrar el formulario de verificación
-    const formularioVerificacion = document.getElementById("formulario-verificacion");
-    if (formularioVerificacion) {
-        formularioVerificacion.style.display = "block";
+    try {
+        // Inicializar jsPDF
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
         
-        // Llenar información del equipo en el formulario
-        document.getElementById("nombre-equipo-verificacion").textContent = equipoSelec.nombre;
-        document.getElementById("ubicacion-equipo-verificacion").textContent = `Ubicación: ${equipoSelec.ubicacion || 'No especificada'}`;
-        document.getElementById("categoria-equipo-verificacion").textContent = `Categoría: ${formatearCategoria(equipoSelec.categoria)}`;
-        document.getElementById("serie-equipo-verificacion").textContent = `Serie: ${equipoSelec.serie}`;
+        // Colores para el diseño
+        const colorPrimario = [41, 128, 185]; // Azul profesional
+        const colorSecundario = [52, 73, 94]; // Gris oscuro
         
-        // Cargar checklist según la categoría del equipo
-        cargarChecklistVerificacion(equipoSelec.categoria);
+        // Agregar encabezado con fecha y hora
+        const fechaGeneracion = new Date().toLocaleString();
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Generado: ${fechaGeneracion}`, 20, 10);
         
-        // Guardar referencia al equipo seleccionado para uso posterior
-        window.equipoSeleccionado = equipoSelec;
+        // Título del documento con estilo
+        doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2]);
+        doc.rect(0, 15, 210, 15, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text("UMAE HE Puebla - INFORME DE EQUIPO MÉDICO", 105, 24, { align: "center" });
         
-        mostrarMensaje(`Iniciando verificación del equipo: ${equipoSelec.nombre}`, "info");
-    } else {
-        console.error("No se encontró el formulario de verificación");
+        // Información del equipo en un recuadro
+        doc.setDrawColor(200, 200, 200);
+        doc.setFillColor(245, 245, 245);
+        doc.roundedRect(20, 40, 170, 50, 3, 3, 'FD');
+        
+        doc.setTextColor(colorSecundario[0], colorSecundario[1], colorSecundario[2]);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text("Datos Generales del Equipo", 30, 50);
+        
+        // Datos del equipo en dos columnas
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(60, 60, 60);
+        
+        let y1 = 58; // Primera columna
+        let y2 = 58; // Segunda columna
+        
+        // Primera columna de datos
+        doc.text(`ID/Serie: ${equipo.id || equipo.serie}`, 30, y1); y1 += 7;
+        doc.text(`Nombre: ${acortarTextoLargo(equipo.nombre, 40)}`, 30, y1); y1 += 7;
+        doc.text(`Marca: ${equipo.marca}`, 30, y1); y1 += 7;
+        doc.text(`Modelo: ${equipo.modelo}`, 30, y1); y1 += 7;
+        
+        // Segunda columna de datos
+        doc.text(`Categoría: ${formatearCategoria(equipo.categoria)}`, 110, y2); y2 += 7;
+        doc.text(`Ubicación: ${equipo.ubicacion || "No especificada"}`, 110, y2); y2 += 7;
+        doc.text(`Estado: ${equipo.estado}`, 110, y2); y2 += 7;
+        
+        // Sección de verificaciones con estilo
+        y1 = Math.max(y1, y2) + 10;
+        
+        // Título de verificaciones
+        doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2]);
+        doc.rect(20, y1, 170, 8, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text("HISTORIAL DE VERIFICACIONES", 105, y1 + 5.5, { align: "center" });
+        
+        y1 += 15;
+        
+        if (verificacionesEquipo.length > 0) {
+            // Crear tabla de verificaciones con estilo mejorado
+            doc.autoTable({
+                startY: y1,
+                head: [['Fecha', 'Responsable', 'Resultado', 'Observaciones']],
+                body: verificacionesEquipo.map(v => [
+                    new Date(v.fecha).toLocaleDateString(),
+                    v.responsable,
+                    v.resultado === 'conforme' ? '✓ Conforme' : 
+                    v.resultado === 'observaciones' ? '⚠ Con observaciones' : 
+                    v.resultado === 'no-conforme' ? '✗ No conforme' : v.resultado,
+                    v.observaciones || "Sin observaciones"
+                ]),
+                theme: 'grid',
+                headStyles: {
+                    fillColor: colorSecundario,
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    lineWidth: 0.1,
+                    lineColor: [220, 220, 220]
+                },
+                bodyStyles: {
+                    textColor: [50, 50, 50],
+                    lineWidth: 0.1,
+                    lineColor: [220, 220, 220]
+                },
+                alternateRowStyles: {
+                    fillColor: [240, 240, 240]
+                },
+                margin: { left: 20, right: 20 }
+            });
+        } else {
+            doc.setTextColor(100, 100, 100);
+            doc.setFontSize(10);
+            doc.text("No hay verificaciones registradas para este equipo.", 105, y1 + 10, { align: "center" });
+        }
+        
+        // Pie de página
+        const pageCount = doc.internal.getNumberOfPages();
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        for(let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.text(`Página ${i} de ${pageCount} - Centro Médico Nacional Manuel Ávila Camacho - Sistema de Gestión de Equipamiento Médico`, 105, 290, { align: "center" });
+        }
+        
+        // En lugar de descargar automáticamente, mostrar en un modal para previsualizarlo
+        mostrarPDFEnModal(doc, `Información del equipo ${equipo.nombre}`);
+        
+        mostrarMensaje(`PDF del equipo ${equipo.nombre} generado correctamente`, "success");
+    } catch (error) {
+        console.error('Error al generar PDF:', error);
+        mostrarMensaje("Error al generar el PDF", "error");
     }
 }
 
+
+
+
 /**
- * Formatea el nombre de la categoría para mostrar
+ * Genera un PDF desde el historial de verificaciones con diseño mejorado
  */
-function formatearCategoria(categoria) {
-    const categorias = {
-        'alta-tecnologia': 'Alta Tecnología',
-        'soporte-vida': 'Soporte de Vida',
-        'critico': 'Crítico',
-        'general': 'General'
-    };
+function generarPDFEquipoDesdeHistorial(equipoId) {
+    console.log('Generando PDF del equipo desde historial...', equipoId);
     
-    return categorias[categoria] || categoria;
+    // Buscar el equipo en el array de equipos
+    const equipo = equipos.find(eq => eq.id === equipoId || eq.serie === equipoId);
+    if (!equipo) {
+        mostrarMensaje("No se pudo encontrar la información del equipo", "error");
+        return;
+    }
+    
+    // Filtrar las verificaciones de este equipo
+    const verificacionesEquipo = verificaciones.filter(v => v.equipoId === equipoId);
+    
+    try {
+        // Inicializar jsPDF
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
+        
+        // Colores para el diseño
+        const colorPrimario = [41, 128, 185]; // Azul profesional
+        const colorSecundario = [52, 73, 94]; // Gris oscuro
+        
+        // Agregar encabezado con fecha y hora
+        const fechaGeneracion = new Date().toLocaleString();
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Generado: ${fechaGeneracion}`, 20, 10);
+        
+        // Título del documento con estilo
+        doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2]);
+        doc.rect(0, 15, 210, 15, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text("UMAE HE Puebla - INFORME DE EQUIPO MÉDICO", 105, 24, { align: "center" });
+        
+        // Información del equipo en un recuadro
+        doc.setDrawColor(200, 200, 200);
+        doc.setFillColor(245, 245, 245);
+        doc.roundedRect(20, 40, 170, 50, 3, 3, 'FD');
+        
+        doc.setTextColor(colorSecundario[0], colorSecundario[1], colorSecundario[2]);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text("Datos Generales del Equipo", 30, 50);
+        
+        // Datos del equipo en dos columnas
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(60, 60, 60);
+        
+        let y1 = 58; // Primera columna
+        let y2 = 58; // Segunda columna
+        
+        // Primera columna de datos
+        doc.text(`ID/Serie: ${equipo.id || equipo.serie}`, 30, y1); y1 += 7;
+        doc.text(`Nombre: ${acortarTextoLargo(equipo.nombre, 40)}`, 30, y1); y1 += 7;
+        doc.text(`Marca: ${equipo.marca}`, 30, y1); y1 += 7;
+        doc.text(`Modelo: ${equipo.modelo}`, 30, y1); y1 += 7;
+        
+        // Segunda columna de datos
+        doc.text(`Categoría: ${formatearCategoria(equipo.categoria)}`, 110, y2); y2 += 7;
+        doc.text(`Ubicación: ${equipo.ubicacion || "No especificada"}`, 110, y2); y2 += 7;
+        doc.text(`Estado: ${equipo.estado}`, 110, y2); y2 += 7;
+        
+        // Sección de verificaciones con estilo
+        y1 = Math.max(y1, y2) + 10;
+        
+        // Título de verificaciones
+        doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2]);
+        doc.rect(20, y1, 170, 8, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text("HISTORIAL DE VERIFICACIONES", 105, y1 + 5.5, { align: "center" });
+        
+        y1 += 15;
+        
+        if (verificacionesEquipo.length > 0) {
+            // Crear tabla de verificaciones con estilo mejorado
+            doc.autoTable({
+                startY: y1,
+                head: [['Fecha', 'Responsable', 'Resultado', 'Observaciones']],
+                body: verificacionesEquipo.map(v => [
+                    new Date(v.fecha).toLocaleDateString(),
+                    v.responsable,
+                    v.resultado === 'conforme' ? '✓ Conforme' : 
+                    v.resultado === 'observaciones' ? '⚠ Con observaciones' : 
+                    v.resultado === 'no-conforme' ? '✗ No conforme' : v.resultado,
+                    v.observaciones || "Sin observaciones"
+                ]),
+                theme: 'grid',
+                headStyles: {
+                    fillColor: colorSecundario,
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    lineWidth: 0.1,
+                    lineColor: [220, 220, 220]
+                },
+                bodyStyles: {
+                    textColor: [50, 50, 50],
+                    lineWidth: 0.1,
+                    lineColor: [220, 220, 220]
+                },
+                alternateRowStyles: {
+                    fillColor: [240, 240, 240]
+                },
+                margin: { left: 20, right: 20 }
+            });
+        } else {
+            doc.setTextColor(100, 100, 100);
+            doc.setFontSize(10);
+            doc.text("No hay verificaciones registradas para este equipo.", 105, y1 + 10, { align: "center" });
+        }
+        
+        // Pie de página
+        const pageCount = doc.internal.getNumberOfPages();
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        for(let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.text(`Página ${i} de ${pageCount} - Centro Médico Nacional Manuel Ávila Camacho - Sistema de Gestión de Equipamiento Médico`, 105, 290, { align: "center" });
+        }
+        
+        // En lugar de descargar automáticamente, mostrar en un modal para previsualizarlo
+        mostrarPDFEnModal(doc, `Información del equipo ${equipo.nombre}`);
+        
+        mostrarMensaje(`PDF del equipo ${equipo.nombre} generado correctamente`, "success");
+    } catch (error) {
+        console.error('Error al generar PDF:', error);
+        mostrarMensaje("Error al generar el PDF", "error");
+    }
 }
 
 /**
- * Carga el checklist según la categoría del equipo
+ * Acorta un texto si es demasiado largo, añadiendo "..." al final
+ * @param {string} texto - El texto a acortar
+ * @param {number} longitud - La longitud máxima del texto (por defecto 30)
+ * @returns {string} - El texto acortado o el texto original si no es necesario acortarlo
+ */
+function acortarTextoLargo(texto, longitud = 30) {
+    if (texto && texto.length > longitud) {
+        return texto.substring(0, longitud) + '...';
+    }
+    return texto;
+}
+
+/**
+ * Genera un PDF desde el historial de verificaciones con diseño mejorado
+ */
+function generarPDFEquipoDesdeHistorial(equipoId) {
+    console.log('Generando PDF del equipo desde historial...', equipoId);
+    
+    // Buscar el equipo en el array de equipos
+    const equipo = equipos.find(eq => eq.id === equipoId || eq.serie === equipoId);
+    if (!equipo) {
+        mostrarMensaje("No se pudo encontrar la información del equipo", "error");
+        return;
+    }
+    
+    // Filtrar las verificaciones de este equipo
+    const verificacionesEquipo = verificaciones.filter(v => v.equipoId === equipoId);
+    
+    try {
+        // Inicializar jsPDF
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
+        
+        // Colores para el diseño
+        const colorPrimario = [41, 128, 185]; // Azul profesional
+        const colorSecundario = [52, 73, 94]; // Gris oscuro
+        
+        // Agregar encabezado con fecha y hora
+        const fechaGeneracion = new Date().toLocaleString();
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Generado: ${fechaGeneracion}`, 20, 10);
+        
+        // Título del documento con estilo
+        doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2]);
+        doc.rect(0, 15, 210, 15, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text("UMAE HE Puebla - INFORME DE EQUIPO MÉDICO", 105, 24, { align: "center" });
+        
+        // Información del equipo en un recuadro
+        doc.setDrawColor(200, 200, 200);
+        doc.setFillColor(245, 245, 245);
+        doc.roundedRect(20, 40, 170, 50, 3, 3, 'FD');
+        
+        doc.setTextColor(colorSecundario[0], colorSecundario[1], colorSecundario[2]);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text("Datos Generales del Equipo", 30, 50);
+        
+        // Datos del equipo en dos columnas
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(60, 60, 60);
+        
+        let y1 = 58; // Primera columna
+        let y2 = 58; // Segunda columna
+        
+        // Primera columna de datos
+        doc.text(`ID/Serie: ${equipo.id || equipo.serie}`, 30, y1); y1 += 7;
+        doc.text(`Nombre: ${acortarTextoLargo(equipo.nombre, 40)}`, 30, y1); y1 += 7;
+        doc.text(`Marca: ${equipo.marca}`, 30, y1); y1 += 7;
+        doc.text(`Modelo: ${equipo.modelo}`, 30, y1); y1 += 7;
+        
+        // Segunda columna de datos
+        doc.text(`Categoría: ${formatearCategoria(equipo.categoria)}`, 110, y2); y2 += 7;
+        doc.text(`Ubicación: ${equipo.ubicacion || "No especificada"}`, 110, y2); y2 += 7;
+        doc.text(`Estado: ${equipo.estado}`, 110, y2); y2 += 7;
+        
+        // Sección de verificaciones con estilo
+        y1 = Math.max(y1, y2) + 10;
+        
+        // Título de verificaciones
+        doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2]);
+        doc.rect(20, y1, 170, 8, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text("HISTORIAL DE VERIFICACIONES", 105, y1 + 5.5, { align: "center" });
+        
+        y1 += 15;
+        
+        if (verificacionesEquipo.length > 0) {
+            // Crear tabla de verificaciones con estilo mejorado
+            doc.autoTable({
+                startY: y1,
+                head: [['Fecha', 'Responsable', 'Resultado', 'Observaciones']],
+                body: verificacionesEquipo.map(v => [
+                    new Date(v.fecha).toLocaleDateString(),
+                    v.responsable,
+                    v.resultado === 'conforme' ? '✓ Conforme' : 
+                    v.resultado === 'observaciones' ? '⚠ Con observaciones' : 
+                    v.resultado === 'no-conforme' ? '✗ No conforme' : v.resultado,
+                    v.observaciones || "Sin observaciones"
+                ]),
+                theme: 'grid',
+                headStyles: {
+                    fillColor: colorSecundario,
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    lineWidth: 0.1,
+                    lineColor: [220, 220, 220]
+                },
+                bodyStyles: {
+                    textColor: [50, 50, 50],
+                    lineWidth: 0.1,
+                    lineColor: [220, 220, 220]
+                },
+                alternateRowStyles: {
+                    fillColor: [240, 240, 240]
+                },
+                margin: { left: 20, right: 20 }
+            });
+        } else {
+            doc.setTextColor(100, 100, 100);
+            doc.setFontSize(10);
+            doc.text("No hay verificaciones registradas para este equipo.", 105, y1 + 10, { align: "center" });
+        }
+        
+        // Pie de página
+        const pageCount = doc.internal.getNumberOfPages();
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        for(let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.text(`Página ${i} de ${pageCount} - Centro Médico Nacional Manuel Ávila Camacho - Sistema de Gestión de Equipamiento Médico`, 105, 290, { align: "center" });
+        }
+        
+        // En lugar de descargar automáticamente, mostrar en un modal para previsualizarlo
+        mostrarPDFEnModal(doc, `Información del equipo ${equipo.nombre}`);
+        
+        mostrarMensaje(`PDF del equipo ${equipo.nombre} generado correctamente`, "success");
+    } catch (error) {
+        console.error('Error al generar PDF:', error);
+        mostrarMensaje("Error al generar el PDF", "error");
+    }
+}
+
+/**
+ * Carga el checklist de verificación según la categoría del equipo
+ * @param {string} categoria - Categoría del equipo
  */
 function cargarChecklistVerificacion(categoria) {
     console.log(`Cargando checklist para categoría: ${categoria}`);
     
     const checklistContainer = document.getElementById("checklist-container");
     if (!checklistContainer) {
-        console.error("No se encontró el contenedor del checklist");
+        console.error("Contenedor del checklist no encontrado");
         return;
     }
     
-    // Limpiar checklist actual
+    // Limpiar contenedor
     checklistContainer.innerHTML = '';
     
-    // Definir ítems de verificación según la categoría
-    let itemsVerificacion = [];
+    // Definir ítems del checklist según la categoría
+    let items = [];
     
     switch(categoria) {
         case 'alta-tecnologia':
-            itemsVerificacion = [
-                "Sistema eléctrico en buen estado",
-                "Pantalla sin daños visibles",
-                "Cables y conectores intactos",
-                "Software actualizado y operativo",
-                "Batería cargada (si aplica)",
-                "Calibración vigente",
-                "Panel de control funcional",
-                "Alarmas operativas"
+            items = [
+                "El equipo enciende correctamente",
+                "La pantalla/display funciona sin errores",
+                "Los controles responden adecuadamente",
+                "Las conexiones están en buen estado",
+                "No presenta mensajes de error al iniciar",
+                "Calibración dentro de parámetros",
+                "Software actualizado a la versión correcta",
+                "Los accesorios están completos y funcionales",
+                "El equipo se comunica correctamente con sistemas externos",
+                "La batería de respaldo funciona correctamente",
+                "Los filtros están limpios y en buen estado",
+                "Sistema de refrigeración funcionando correctamente"
             ];
             break;
         case 'soporte-vida':
-            itemsVerificacion = [
-                "Sistema eléctrico en buen estado",
-                "Batería de respaldo cargada",
-                "Alarmas operativas",
-                "Funciones críticas operativas",
-                "Mangueras y conectores intactos",
-                "Sistema de respaldo funcional",
-                "Filtros limpios",
-                "Sensores calibrados",
-                "Panel de control funcional",
-                "Indicadores visuales operativos"
+            items = [
+                "El equipo enciende correctamente",
+                "Las alarmas funcionan y son audibles",
+                "La batería principal está cargada",
+                "La batería de respaldo funciona correctamente",
+                "Los sensores funcionan adecuadamente",
+                "Las válvulas y conectores están en buen estado",
+                "No hay fugas en el sistema",
+                "El sistema de respaldo se activa correctamente",
+                "El equipo responde adecuadamente en prueba de carga",
+                "Los filtros están limpios y en buen estado"
             ];
             break;
         case 'critico':
-            itemsVerificacion = [
-                "Sistema eléctrico en buen estado",
-                "Alarmas operativas",
-                "Sensores calibrados",
-                "Pantalla legible",
-                "Cables y conectores intactos",
-                "Sistema de medición preciso",
-                "Batería funcional (si aplica)",
-                "Filtros limpios (si aplica)"
+            items = [
+                "El equipo enciende correctamente",
+                "Los parámetros vitales se muestran correctamente",
+                "Las alarmas se activan en condiciones críticas",
+                "El sistema de respaldo funciona correctamente",
+                "Los controles responden sin demora",
+                "Las conexiones están seguras",
+                "No presenta mensajes de error",
+                "Los accesorios están completos y funcionales"
             ];
             break;
         case 'general':
-        default:
-            itemsVerificacion = [
-                "Estado físico adecuado",
-                "Sistema eléctrico funcional",
-                "Operatividad general",
-                "Limpieza adecuada",
-                "Sin daños visibles",
-                "Funciones básicas operativas"
+            items = [
+                "El equipo enciende correctamente",
+                "No presenta daños físicos visibles",
+                "Los controles funcionan adecuadamente",
+                "Las conexiones están en buen estado",
+                "El equipo está limpio y desinfectado",
+                "La calibración está dentro de parámetros"
             ];
             break;
+        default:
+            items = [
+                "El equipo enciende correctamente",
+                "Los controles funcionan adecuadamente",
+                "No presenta daños físicos",
+                "Las conexiones están en buen estado"
+            ];
     }
     
     // Crear elementos del checklist
-    itemsVerificacion.forEach((item, index) => {
-        const itemId = `item-check-${index}`;
+    items.forEach((item, index) => {
+        const checklistItem = document.createElement('div');
+        checklistItem.className = 'checklist-item';
         
-        const itemDiv = document.createElement("div");
-        itemDiv.className = "checklist-item";
+        const id = `check-${index}`;
         
-        const checkboxLabel = document.createElement("label");
-        checkboxLabel.className = "checklist-label";
-        checkboxLabel.htmlFor = itemId;
+        checklistItem.innerHTML = `
+            <label class="checklist-label" for="${id}">
+                <input type="checkbox" id="${id}" class="checklist-checkbox" checked>
+                ${item}
+            </label>
+        `;
         
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.id = itemId;
-        checkbox.name = `check-item-${index}`;
-        checkbox.className = "checklist-checkbox";
-        checkbox.required = true;
-        
-        const itemText = document.createTextNode(` ${item}`);
-        
-        checkboxLabel.appendChild(checkbox);
-        checkboxLabel.appendChild(itemText);
-        itemDiv.appendChild(checkboxLabel);
-        checklistContainer.appendChild(itemDiv);
+        checklistContainer.appendChild(checklistItem);
     });
     
-    console.log(`Checklist generado con ${itemsVerificacion.length} ítems`);
+    console.log(`Checklist generado con ${items.length} ítems`);
 }
 
 /**
- * Cancela el proceso de verificación
+ * Muestra el PDF en un modal para previsualizarlo antes de descargar
  */
-function cancelarVerificacion() {
-    console.log('Cancelando verificación...');
+function mostrarPDFEnModal(doc, titulo) {
+    // Generar el PDF como base64
+    const pdfData = doc.output('datauristring');
     
-    // Ocultar formulario
-    const formularioVerificacion = document.getElementById("formulario-verificacion");
-    if (formularioVerificacion) {
-        formularioVerificacion.style.display = "none";
-    }
+    // Crear modal para mostrar el PDF
+    const modal = document.createElement('div');
+    modal.className = 'pdf-preview-modal';
+    modal.innerHTML = `
+        <div class="pdf-preview-content">
+            <div class="pdf-preview-header">
+                <h3>${titulo}</h3>
+                <div class="pdf-preview-actions">
+                    <button class="btn-descargar-pdf">💾 Descargar</button>
+                    <button class="btn-cerrar-pdf">✖</button>
+                </div>
+            </div>
+            <div class="pdf-preview-body">
+                <iframe src="${pdfData}" width="100%" height="100%"></iframe>
+            </div>
+        </div>
+    `;
     
-    // Limpiar campos
-    document.getElementById("responsable-verificacion").value = "";
-    document.getElementById("equipo-verificar").selectedIndex = 0;
+    document.body.appendChild(modal);
     
-    // Limpiar observaciones y resultado si existen
-    const observaciones = document.getElementById("observaciones-verificacion");
-    if (observaciones) observaciones.value = "";
+    // Mostrar el modal con animación
+    setTimeout(() => {
+        modal.classList.add('active');
+    }, 50);
     
-    const resultado = document.getElementById("resultado-general");
-    if (resultado) resultado.selectedIndex = 0;
+    // Configurar botón de descarga
+    const btnDescargar = modal.querySelector('.btn-descargar-pdf');
+    btnDescargar.addEventListener('click', () => {
+        // Nombre del archivo basado en el equipo
+        const equipo = titulo.replace('Información del equipo ', '');
+        const filename = `equipo_${equipo.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`;
+        doc.save(filename);
+    });
     
-    // Eliminar referencia al equipo seleccionado
-    window.equipoSeleccionado = null;
+    // Configurar botón de cerrar
+    const btnCerrar = modal.querySelector('.btn-cerrar-pdf');
+    btnCerrar.addEventListener('click', () => {
+        modal.classList.remove('active');
+        setTimeout(() => {
+            document.body.removeChild(modal);
+        }, 300);
+    });
     
-    mostrarMensaje("Verificación cancelada", "info");
-}
-
-/**
- * Guarda la verificación realizada
- */
-function guardarVerificacion() {
-    console.log('Guardando verificación...');
-    
-    // Obtener información básica
-    const equipoSelec = window.equipoSeleccionado;
-    const responsable = document.getElementById("responsable-verificacion").value;
-    const observaciones = document.getElementById("observaciones-verificacion").value;
-    const resultado = document.getElementById("resultado-general").value;
-    
-    if (!equipoSelec) {
-        console.error("No hay equipo seleccionado");
-        mostrarMensaje("Error: No se encontró el equipo seleccionado", "error");
-        return;
-    }
-    
-    // Verificar resultado seleccionado
-    if (!resultado) {
-        mostrarMensaje("Por favor seleccione un resultado general", "warning");
-        return;
-    }
-    
-    // Obtener items del checklist
-    const checklistItems = document.querySelectorAll(".checklist-checkbox");
-    const itemsVerificados = [];
-    
-    let todosVerificados = true;
-    checklistItems.forEach((item, index) => {
-        if (!item.checked) {
-            todosVerificados = false;
+    // Cerrar al hacer clic fuera del contenido
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                document.body.removeChild(modal);
+            }, 300);
         }
-        
-        itemsVerificados.push({
-            texto: item.parentElement.textContent.trim(),
-            verificado: item.checked
-        });
     });
+}
+
+/**
+ * Muestra el detalle completo de una verificación
+ * @param {string} verificacionId - ID de la verificación a mostrar
+ */
+function mostrarDetalleVerificacion(verificacionId) {
+    console.log(`Mostrando detalle de verificación: ${verificacionId}`);
     
-    if (!todosVerificados) {
-        mostrarMensaje("Debe completar todos los ítems del checklist", "warning");
+    // Buscar la verificación
+    const verificacion = verificaciones.find(v => v.id === verificacionId);
+    
+    if (!verificacion) {
+        mostrarMensaje("No se encontró la verificación solicitada", "error");
         return;
     }
     
-    // Crear registro de verificación
-    const verificacion = {
-        id: `ver-${Date.now()}`,
-        equipoId: equipoSelec.serie,
-        nombreEquipo: equipoSelec.nombre,
-        ubicacionEquipo: equipoSelec.ubicacion || 'No especificada',
-        responsable: responsable,
-        fecha: new Date().toISOString(),
-        resultado: resultado,
-        observaciones: observaciones,
-        items: itemsVerificados
-    };
+    // Crear modal para mostrar detalles
+    const modal = document.createElement('div');
+    modal.className = 'detalle-verificacion-modal';
     
-    console.log('Verificación completada:', verificacion);
+    // Formatear fecha
+    const fecha = new Date(verificacion.fecha).toLocaleString();
     
-    // Añadir al array y guardar en localStorage
-    verificaciones.unshift(verificacion); // Agregar al inicio para que aparezca primero en el historial
-    localStorage.setItem('verificacionesEquipos', JSON.stringify(verificaciones));
+    // Formatear resultado
+    const resultadoTexto = {
+        'conforme': '✅ Conforme',
+        'observaciones': '⚠️ Con observaciones',
+        'no-conforme': '❌ No conforme'
+    }[verificacion.resultado] || verificacion.resultado;
     
-    // Mostrar mensaje de éxito
-    mostrarMensaje(`Verificación del equipo "${equipoSelec.nombre}" guardada correctamente`, "success");
+    const resultadoClase = `estado-${verificacion.resultado}`;
     
-    // Actualizar tabla de verificaciones
-    actualizarTablaVerificaciones();
-    
-    // Actualizar filtro de equipos en el historial
-    const filtroEquipo = document.getElementById("filtro-equipo-historial");
-    if (filtroEquipo) {
-        actualizarFiltroEquipos(filtroEquipo);
+    // Crear HTML para items verificados
+    let itemsHTML = '';
+    if (verificacion.items && verificacion.items.length > 0) {
+        itemsHTML = '<div class="verificacion-items"><h4>Elementos verificados:</h4><ul>';
+        verificacion.items.forEach(item => {
+            const iconoItem = item.verificado ? '✅' : '❌';
+            itemsHTML += `<li>${iconoItem} ${item.texto}</li>`;
+        });
+        itemsHTML += '</ul></div>';
     }
     
-    // Ocultar formulario
-    document.getElementById("formulario-verificacion").style.display = "none";
+    // Construir el contenido del modal
+    modal.innerHTML = `
+        <div class="detalle-verificacion-content">
+            <div class="detalle-verificacion-header">
+                <h3>Detalle de Verificación</h3>
+                <button class="btn-cerrar-detalle">✖</button>
+            </div>
+            <div class="detalle-verificacion-body">
+                <div class="detalle-verificacion-info">
+                    <div class="detalle-verificacion-equipo">
+                        <h4>${verificacion.nombreEquipo}</h4>
+                        <p><strong>ID/Serie:</strong> ${verificacion.equipoId}</p>
+                        <p><strong>Ubicación:</strong> ${verificacion.ubicacionEquipo}</p>
+                    </div>
+                    <div class="detalle-verificacion-datos">
+                        <p><strong>Fecha:</strong> ${fecha}</p>
+                        <p><strong>Responsable:</strong> ${verificacion.responsable}</p>
+                        <p><strong>Resultado:</strong> <span class="${resultadoClase}">${resultadoTexto}</span></p>
+                    </div>
+                </div>
+                
+                ${itemsHTML}
+                
+                <div class="detalle-verificacion-observaciones">
+                    <h4>Observaciones:</h4>
+                    <p>${verificacion.observaciones || "Sin observaciones"}</p>
+                </div>
+                
+                <div class="detalle-verificacion-acciones">
+                    <button class="btn-pdf-verificacion-detalle" data-equipo="${verificacion.equipoId}">📄 Generar PDF</button>
+                    <button class="btn-duplicar-verificacion-detalle" data-id="${verificacion.id}">🔄 Duplicar verificación</button>
+                </div>
+            </div>
+        </div>
+    `;
     
-    // Resetear campos
-    document.getElementById("responsable-verificacion").value = "";
-    document.getElementById("equipo-verificar").selectedIndex = 0;
-    document.getElementById("observaciones-verificacion").value = "";
-    document.getElementById("resultado-general").selectedIndex = 0;
+    document.body.appendChild(modal);
     
-    // Eliminar referencia
-    window.equipoSeleccionado = null;
+    // Mostrar el modal con animación
+    setTimeout(() => {
+        modal.classList.add('active');
+    }, 50);
+    
+    // Configurar botón de cerrar
+    const btnCerrar = modal.querySelector('.btn-cerrar-detalle');
+    btnCerrar.addEventListener('click', () => {
+        modal.classList.remove('active');
+        setTimeout(() => {
+            document.body.removeChild(modal);
+        }, 300);
+    });
+    
+    // Configurar botón de generar PDF
+    const btnPDF = modal.querySelector('.btn-pdf-verificacion-detalle');
+    btnPDF.addEventListener('click', () => {
+        generarPDFEquipoDesdeHistorial(verificacion.equipoId);
+    });
+    
+    // Configurar botón de duplicar verificación
+    const btnDuplicar = modal.querySelector('.btn-duplicar-verificacion-detalle');
+    btnDuplicar.addEventListener('click', () => {
+        duplicarVerificacion(verificacion.id);
+        // Cerrar modal después de duplicar
+        modal.classList.remove('active');
+        setTimeout(() => {
+            document.body.removeChild(modal);
+        }, 300);
+    });
+    
+    // Cerrar al hacer clic fuera del contenido
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                document.body.removeChild(modal);
+            }, 300);
+        }
+    });
 }
 
 // ===== FUNCIONES DE HISTORIAL DE VERIFICACIONES =====
@@ -478,16 +927,21 @@ function actualizarTablaVerificaciones(verificacionesFiltradas = null) {
         
         const resultadoClase = `estado-${verificacion.resultado}`;
         
-        // Crear fila
+        // Crear fila con botón de duplicación adicional
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${fecha}</td>
-            <td>${verificacion.nombreEquipo}</td>
+            <td title="${verificacion.nombreEquipo}">${acortarTextoLargo(verificacion.nombreEquipo, 25)}</td>
             <td>${verificacion.ubicacionEquipo}</td>
             <td>${verificacion.responsable}</td>
             <td class="${resultadoClase}">${resultadoTexto}</td>
-            <td>
-                <button class="btn-ver-detalle" data-id="${verificacion.id}">👁️ Ver</button>
+            <td class="acciones-container">
+                <div class="btn-acciones">
+                    <button class="btn-ver-detalle" data-id="${verificacion.id}">👁️</button>
+                    <button class="btn-pdf-verificacion" data-equipo="${verificacion.equipoId}">📄</button>
+                    <button class="btn-duplicar-verificacion" data-id="${verificacion.id}">🔄</button>
+                    <button class="btn-eliminar-verificacion" data-id="${verificacion.id}">🗑️</button>
+                </div>
             </td>
         `;
         
@@ -501,8 +955,58 @@ function actualizarTablaVerificaciones(verificacionesFiltradas = null) {
             mostrarDetalleVerificacion(verificacionId);
         });
     });
+
+    // Configurar botones de eliminar verificación
+document.querySelectorAll(".btn-eliminar-verificacion").forEach(btn => {
+    btn.addEventListener("click", function() {
+        const verificacionId = this.getAttribute("data-id");
+        eliminarVerificacion(verificacionId);
+    });
+});
     
-    console.log(`Tabla actualizada con ${verificacionesMostrar.length} verificaciones`);
+    // Configurar botones de generar PDF
+    document.querySelectorAll(".btn-pdf-verificacion").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const equipoId = this.getAttribute("data-equipo");
+            generarPDFEquipoDesdeHistorial(equipoId);
+        });
+    });
+    
+    // Configurar botones de duplicar verificación
+    document.querySelectorAll(".btn-duplicar-verificacion").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const verificacionId = this.getAttribute("data-id");
+            duplicarVerificacion(verificacionId);
+        });
+    });
+    
+    
+}
+
+/**
+ * Inicializar la tabla de verificaciones
+ */
+function inicializarTablaVerificaciones() {
+    const tablaHead = document.querySelector("#tabla-verificaciones thead");
+    if (!tablaHead) {
+        console.error("No se encontró el encabezado de la tabla de verificaciones");
+        return;
+    }
+    
+    // Crear encabezados de la tabla
+    tablaHead.innerHTML = `
+        <tr>
+            <th>Fecha</th>
+            <th>Equipo</th>
+            <th>Ubicación</th>
+            <th>Responsable</th>
+            <th>Resultado</th>
+            <th>Acciones</th>
+        </tr>
+    `;
+    
+    // Actualizar la tabla con las verificaciones
+    actualizarTablaVerificaciones();
 }
 
 /**
@@ -525,273 +1029,540 @@ function actualizarFiltroEquipos(filtroEquipo) {
         const equipoVerificado = equipos.find(e => e && e.serie === equipoId);
         if (equipoVerificado) {
             const option = document.createElement("option");
-            option.value = equipoId;
-            option.textContent = equipoVerificado.nombre;
+            option.value = equipoVerificado.serie;
+            option.textContent = `${equipoVerificado.nombre} (${equipoVerificado.serie})`;
             filtroEquipo.appendChild(option);
         }
     });
+    
+    console.log(`Filtro de equipos actualizado con ${equiposVerificados.size} equipos`);
+}
+
+// Esperar a que el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar módulo de verificación
+    const interval = setInterval(function() {
+        if (typeof equipos !== 'undefined' && Array.isArray(equipos)) {
+            clearInterval(interval);
+            clearTimeout(timeoutSecurity); // Añadir esta línea
+            console.log('Equipos detectados, inicializando módulo de verificación...');
+            inicializarModuloVerificacion();
+        }
+    }, 500);
+    
+    // Timeout de seguridad después de 10 segundos
+    const timeoutSecurity = setTimeout(function() { // Almacenar la referencia
+        clearInterval(interval);
+        console.error('Timeout al esperar los equipos. Inicializando módulo de verificación sin equipos...');
+        inicializarModuloVerificacion();
+    }, 10000);
+});
+
+/**
+ * Duplica una verificación existente para ahorrar tiempo en verificaciones rutinarias
+ * @param {string} verificacionId - ID de la verificación a duplicar
+ */
+function duplicarVerificacion(verificacionId) {
+    console.log(`Duplicando verificación: ${verificacionId}`);
+    
+    // Buscar la verificación a duplicar
+    const verificacion = verificaciones.find(v => v.id === verificacionId);
+    
+    if (!verificacion) {
+        mostrarMensaje("Error: No se encontró la verificación seleccionada", "error");
+        return;
+    }
+    
+    // Obtener el equipo asociado a la verificación
+    const equipo = equipos.find(eq => eq.serie === verificacion.equipoId);
+    
+    if (!equipo) {
+        mostrarMensaje(`Error: No se encontró el equipo ${verificacion.equipoId} en el sistema`, "error");
+        return;
+    }
+    
+    // Verificar si el equipo sigue operativo
+    if (equipo.estado !== 'operativo') {
+        mostrarMensaje(`El equipo ${equipo.nombre} no está en estado operativo actualmente`, "warning");
+        return;
+    }
+    
+    // Configurar el selector de equipo
+    const selectorEquipo = document.getElementById("equipo-verificar");
+    if (!selectorEquipo) {
+        mostrarMensaje("Error: No se encontró el selector de equipos", "error");
+        return;
+    }
+    
+    // Seleccionar el equipo en el selector
+    let equipoEncontrado = false;
+    for (let i = 0; i < selectorEquipo.options.length; i++) {
+        if (selectorEquipo.options[i].value === verificacion.equipoId) {
+            selectorEquipo.selectedIndex = i;
+            equipoEncontrado = true;
+            break;
+        }
+    }
+    
+    if (!equipoEncontrado) {
+        mostrarMensaje(`El equipo ${equipo.nombre} ya no está disponible para verificación`, "warning");
+        return;
+    }
+    
+    // Rellenar el campo de responsable (opcionalmente conservar el anterior)
+    const responsableInput = document.getElementById("responsable-verificacion");
+    if (responsableInput) {
+        responsableInput.value = verificacion.responsable;
+    }
+    
+    // IMPORTANTE: Guardar referencia al equipo seleccionado para que la verificación funcione
+    window.equipoSeleccionado = equipo;
+    
+    // Mostrar el formulario de verificación
+    const formularioVerificacion = document.getElementById("formulario-verificacion");
+    if (formularioVerificacion) {
+        formularioVerificacion.style.display = "block";
+        
+        // Actualizar la información del equipo seleccionado
+        const tituloEquipo = document.getElementById("titulo-equipo-verificacion");
+        if (tituloEquipo) {
+            tituloEquipo.textContent = `${equipo.nombre} - ${equipo.marca} ${equipo.modelo}`;
+        }
+        
+        // Mostrar datos adicionales del equipo
+        const datosEquipo = document.getElementById("datos-equipo-verificacion");
+        if (datosEquipo) {
+            datosEquipo.innerHTML = `
+                <p><strong>ID:</strong> ${equipo.id || equipo.serie}</p>
+                <p><strong>Serie:</strong> ${equipo.serie || 'N/A'}</p>
+                <p><strong>Categoría:</strong> ${formatearCategoria(equipo.categoria)}</p>
+                <p><strong>Ubicación:</strong> ${equipo.ubicacion || 'No especificada'}</p>
+            `;
+        }
+        
+        // Asegurarse de que el contenedor del checklist exista
+        const checklistContainer = document.getElementById("checklist-container");
+        if (!checklistContainer) {
+            console.error("Contenedor del checklist no encontrado");
+            
+            // Crear el contenedor si no existe
+            const nuevoContainer = document.createElement('div');
+            nuevoContainer.id = 'checklist-container';
+            nuevoContainer.className = 'checklist-container';
+            formularioVerificacion.insertBefore(nuevoContainer, document.getElementById('form-verificacion'));
+        }
+        
+        // Cargar el checklist según la categoría del equipo
+        cargarChecklistVerificacion(equipo.categoria);
+        
+        // Esperar a que el checklist se cargue para marcar las casillas
+        setTimeout(() => {
+            // Marcar todas las casillas del checklist
+            const checkboxes = document.querySelectorAll('.checklist-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            
+            // Pre-llenar observaciones si las había
+            const observacionesTextarea = document.getElementById("observaciones-verificacion");
+            if (observacionesTextarea) {
+                observacionesTextarea.value = verificacion.observaciones || "";
+            }
+            
+            // Pre-seleccionar el resultado
+            const resultadoSelect = document.getElementById("resultado-general");
+            if (resultadoSelect) {
+                resultadoSelect.value = verificacion.resultado;
+            }
+            
+            // Hacer scroll suave hacia el formulario de verificación
+            formularioVerificacion.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start'
+            });
+            
+            // Añadir un efecto de resaltado temporal para llamar la atención
+            formularioVerificacion.classList.add('highlight-effect');
+            setTimeout(() => {
+                formularioVerificacion.classList.remove('highlight-effect');
+            }, 1500);
+            
+            // Añadir un indicador visual de duplicación
+            const indicadorDuplicacion = document.createElement('div');
+            indicadorDuplicacion.className = 'duplicacion-indicator';
+            indicadorDuplicacion.innerHTML = `
+                <div class="duplicacion-icon">🔄</div>
+                <div class="duplicacion-text">
+                    <strong>Verificación duplicada</strong>
+                    <span>Se han copiado los valores de la verificación anterior. Por favor revise y confirme.</span>
+                </div>
+            `;
+            
+            // Insertar el indicador al principio del formulario
+            formularioVerificacion.insertBefore(
+                indicadorDuplicacion, 
+                formularioVerificacion.firstChild
+            );
+            
+            // Eliminar el indicador después de guardar o cancelar la verificación
+            const btnGuardar = document.querySelector('.btn-guardar-verificacion');
+            const btnCancelar = document.querySelector('.btn-cancelar-verificacion');
+            
+            if (btnGuardar) {
+                btnGuardar.addEventListener('click', function() {
+                    const indicator = document.querySelector('.duplicacion-indicator');
+                    if (indicator) indicator.remove();
+                }, { once: true });
+            }
+            
+            if (btnCancelar) {
+                btnCancelar.addEventListener('click', function() {
+                    const indicator = document.querySelector('.duplicacion-indicator');
+                    if (indicator) indicator.remove();
+                }, { once: true });
+            }
+            
+            mostrarMensaje("Se ha duplicado la verificación anterior. Revise los datos y guarde la nueva verificación.", "info");
+        }, 300); // Aumentar el tiempo de espera para asegurar que todo esté cargado
+        
+        // Ocultar selector de equipos mientras se realiza la verificación
+        document.querySelector('.selector-equipo').style.display = 'none';
+    }
+}
+
+/**
+ * Cancela el proceso de verificación y oculta el formulario
+ */
+function cancelarVerificacion() {
+    console.log('Cancelando proceso de verificación...');
+    
+    // Ocultar formulario de verificación
+    const formularioVerificacion = document.getElementById("formulario-verificacion");
+    if (formularioVerificacion) {
+        formularioVerificacion.style.display = "none";
+    }
+    
+    // Mostrar selector de equipos
+    const selectorEquipo = document.querySelector('.selector-equipo');
+    if (selectorEquipo) {
+        selectorEquipo.style.display = 'block';
+    }
+    
+    // Limpiar campos del formulario
+    document.getElementById("form-verificacion").reset();
+    
+    // Eliminar referencia al equipo seleccionado
+    delete window.equipoSeleccionado;
+    
+    mostrarMensaje("Proceso de verificación cancelado", "info");
+}
+
+/**
+ * Inicia el proceso de verificación de un equipo
+ */
+function iniciarVerificacion() {
+    console.log('Iniciando proceso de verificación...');
+    
+    const selectorEquipo = document.getElementById("equipo-verificar");
+    const responsableInput = document.getElementById("responsable-verificacion");
+    
+    if (!selectorEquipo || !selectorEquipo.value) {
+        mostrarMensaje("Por favor, seleccione un equipo para verificar", "error");
+        return;
+    }
+    
+    if (!responsableInput || !responsableInput.value.trim()) {
+        mostrarMensaje("Por favor, ingrese el nombre del responsable", "error");
+        return;
+    }
+    
+    const equipoId = selectorEquipo.value;
+    const responsable = responsableInput.value.trim();
+    
+    // Buscar el equipo seleccionado
+    const equipo = equipos.find(eq => eq.id === equipoId || eq.serie === equipoId);
+    
+    if (!equipo) {
+        mostrarMensaje("Equipo no encontrado", "error");
+        return;
+    }
+    
+    console.log('Equipo seleccionado para verificación:', equipo);
+    console.log('Responsable de verificación:', responsable);
+    
+    // IMPORTANTE: Guardar referencia al equipo seleccionado
+    window.equipoSeleccionado = equipo;
+    
+    // Mostrar el formulario de verificación
+    const formularioVerificacion = document.getElementById("formulario-verificacion");
+    if (formularioVerificacion) {
+        formularioVerificacion.style.display = "block";
+        
+        // Actualizar la información del equipo seleccionado
+        const tituloEquipo = document.getElementById("titulo-equipo-verificacion");
+        if (tituloEquipo) {
+            tituloEquipo.textContent = `${equipo.nombre} - ${equipo.marca} ${equipo.modelo}`;
+        }
+        
+        // Mostrar datos adicionales del equipo
+        const datosEquipo = document.getElementById("datos-equipo-verificacion");
+        if (datosEquipo) {
+            datosEquipo.innerHTML = `
+                <p><strong>ID:</strong> ${equipo.id || equipo.serie}</p>
+                <p><strong>Serie:</strong> ${equipo.serie || 'N/A'}</p>
+                <p><strong>Categoría:</strong> ${formatearCategoria(equipo.categoria)}</p>
+                <p><strong>Ubicación:</strong> ${equipo.ubicacion || 'No especificada'}</p>
+            `;
+        }
+        
+        // Cargar el checklist según la categoría del equipo
+        cargarChecklistVerificacion(equipo.categoria);
+        
+        // Ocultar selector de equipos mientras se realiza la verificación
+        document.querySelector('.selector-equipo').style.display = 'none';
+    } else {
+        console.error("No se encontró el formulario de verificación");
+    }
+}
+/**
+ * Guarda la verificación actual en el historial
+ */
+function guardarVerificacion() {
+    console.log('Guardando verificación...');
+    
+    const selectorEquipo = document.getElementById("equipo-verificar");
+    const responsableInput = document.getElementById("responsable-verificacion");
+    const observacionesInput = document.getElementById("observaciones-verificacion");
+    const resultadoSelect = document.getElementById("resultado-general");
+    
+    if (!selectorEquipo || !selectorEquipo.value) {
+        mostrarMensaje("Por favor, seleccione un equipo para verificar", "error");
+        return;
+    }
+    
+    if (!responsableInput || !responsableInput.value.trim()) {
+        mostrarMensaje("Por favor, ingrese el nombre del responsable", "error");
+        return;
+    }
+    
+    // Obtener datos del equipo seleccionado
+    const equipoId = selectorEquipo.value;
+    const equipo = equipos.find(eq => eq.id === equipoId || eq.serie === equipoId);
+    
+    if (!equipo) {
+        mostrarMensaje("Equipo no encontrado", "error");
+        return;
+    }
+    
+    // Obtener datos de la verificación
+    const responsable = responsableInput.value.trim();
+    const observaciones = observacionesInput.value.trim();
+    const resultado = resultadoSelect ? resultadoSelect.value : 'conforme';
+    
+    // Crear objeto de verificación
+    const nuevaVerificacion = {
+        id: `ver-${Date.now()}`, // ID único para la verificación
+        equipoId: equipo.serie,
+        nombreEquipo: equipo.nombre,
+        ubicacionEquipo: equipo.ubicacion || "No especificada",
+        fecha: new Date().toISOString(),
+        responsable: responsable,
+        resultado: resultado,
+        observaciones: observaciones,
+        items: [] // Se llenará según el checklist
+    };
+    
+    // Obtener items del checklist
+    const checkboxes = document.querySelectorAll('.checklist-checkbox');
+    checkboxes.forEach(checkbox => {
+        const itemTexto = checkbox.parentElement.innerText.trim();
+        nuevaVerificacion.items.push({
+            texto: itemTexto,
+            verificado: checkbox.checked
+        });
+    });
+    
+    // Guardar en el "historial" (array de verificaciones)
+    verificaciones.unshift(nuevaVerificacion);
+    console.log('Verificación guardada:', nuevaVerificacion);
+    
+    // Actualizar tabla de verificaciones
+    actualizarTablaVerificaciones();
+    
+    // Guardar en localStorage
+    try {
+        localStorage.setItem('verificacionesEquipos', JSON.stringify(verificaciones));
+        console.log('Verificaciones guardadas en localStorage');
+    } catch (error) {
+        console.error('Error al guardar en localStorage:', error);
+    }
+    
+    // Mostrar mensaje de éxito
+    mostrarMensaje("Verificación guardada correctamente", "success");
+    
+    // Ocultar formulario de verificación
+    cancelarVerificacion();
 }
 
 /**
  * Filtra el historial de verificaciones según los criterios seleccionados
  */
 function filtrarHistorialVerificaciones() {
-    const filtroEquipo = document.getElementById("filtro-equipo-historial").value;
-    const filtroResultado = document.getElementById("filtro-resultado-historial").value;
-    const filtroFechaDesde = document.getElementById("filtro-fecha-desde").value;
-    const filtroFechaHasta = document.getElementById("filtro-fecha-hasta").value;
+    console.log('Filtrando historial de verificaciones...');
     
-    console.log(`Filtrando verificaciones: Equipo=${filtroEquipo}, Resultado=${filtroResultado}, Desde=${filtroFechaDesde}, Hasta=${filtroFechaHasta}`);
+    const fechaDesdeInput = document.getElementById("fecha-desde");
+    const fechaHastaInput = document.getElementById("fecha-hasta");
+    const equipoFiltro = document.getElementById("filtro-equipo");
+    const resultadoFiltro = document.getElementById("filtro-resultado");
     
-    // Convertir fechas a timestamp para comparación
-    const fechaDesdeTimestamp = filtroFechaDesde ? new Date(filtroFechaDesde).getTime() : 0;
-    const fechaHastaTimestamp = filtroFechaHasta ? new Date(filtroFechaHasta + 'T23:59:59').getTime() : Infinity;
+    // Obtener valores de los filtros
+    const fechaDesde = fechaDesdeInput ? fechaDesdeInput.value : '';
+    const fechaHasta = fechaHastaInput ? fechaHastaInput.value : '';
+    const equipoSeleccionado = equipoFiltro ? equipoFiltro.value : '';
+    const resultadoSeleccionado = resultadoFiltro ? resultadoFiltro.value : '';
     
     // Filtrar verificaciones
-    const verificacionesFiltradas = verificaciones.filter(verificacion => {
-        const fechaVerificacion = new Date(verificacion.fecha).getTime();
-        
-        // Filtro por equipo
-        if (filtroEquipo && verificacion.equipoId !== filtroEquipo) {
-            return false;
-        }
-        
-        // Filtro por resultado
-        if (filtroResultado && verificacion.resultado !== filtroResultado) {
-            return false;
-        }
-        
-        // Filtro por fecha
-        if (fechaVerificacion < fechaDesdeTimestamp || fechaVerificacion > fechaHastaTimestamp) {
-            return false;
-        }
-        
-        return true;
+    const verificacionesFiltradas = verificaciones.filter(v => {
+        return (!fechaDesde || new Date(v.fecha) >= new Date(fechaDesde)) &&
+               (!fechaHasta || new Date(v.fecha) <= new Date(fechaHasta)) &&
+               (!equipoSeleccionado || v.equipoId === equipoSeleccionado) &&
+               (!resultadoSeleccionado || v.resultado === resultadoSeleccionado);
     });
     
-    // Actualizar tabla con las verificaciones filtradas
+    // Actualizar tabla con verificaciones filtradas
     actualizarTablaVerificaciones(verificacionesFiltradas);
     
-    console.log(`Filtrado completado: ${verificacionesFiltradas.length} verificaciones cumplen los criterios`);
+    mostrarMensaje(`Historial filtrado: ${verificacionesFiltradas.length} verificaciones encontradas`, "info");
 }
 
 /**
- * Muestra el detalle de una verificación en un modal
- */
-function mostrarDetalleVerificacion(verificacionId) {
-    console.log(`Mostrando detalle de verificación: ${verificacionId}`);
-    
-    // Buscar la verificación
-    const verificacion = verificaciones.find(v => v.id === verificacionId);
-    
-    if (!verificacion) {
-        console.error(`Verificación con ID ${verificacionId} no encontrada`);
-        mostrarMensaje("Error: No se pudo encontrar la verificación seleccionada", "error");
-        return;
-    }
-    
-    // Verificar si ya existe el modal
-    let modal = document.querySelector('.verificacion-detalle-modal');
-    
-    // Si no existe, crearlo
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.className = 'verificacion-detalle-modal';
-        
-        const modalContent = document.createElement('div');
-        modalContent.className = 'verificacion-detalle-content';
-        
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
-    }
-    
-    const modalContent = modal.querySelector('.verificacion-detalle-content');
-    
-    // Formatear fecha
-    const fecha = new Date(verificacion.fecha).toLocaleString();
-    
-    // Formatear resultado
-    const resultadoTexto = {
-        'conforme': '✅ Conforme',
-        'observaciones': '⚠️ Con observaciones',
-        'no-conforme': '❌ No conforme'
-    }[verificacion.resultado] || verificacion.resultado;
-    
-    // Contenido del modal
-    modalContent.innerHTML = `
-        <div class="verificacion-detalle-header">
-            <h3>Detalle de Verificación</h3>
-            <button class="verificacion-detalle-close">&times;</button>
-        </div>
-        <div class="verificacion-detalle-info">
-            <p><span>Equipo:</span> <span>${verificacion.nombreEquipo}</span></p>
-            <p><span>Serie:</span> <span>${verificacion.equipoId}</span></p>
-            <p><span>Ubicación:</span> <span>${verificacion.ubicacionEquipo}</span></p>
-            <p><span>Responsable:</span> <span>${verificacion.responsable}</span></p>
-            <p><span>Fecha:</span> <span>${fecha}</span></p>
-            <p><span>Resultado:</span> <span class="estado-${verificacion.resultado}">${resultadoTexto}</span></p>
-            ${verificacion.observaciones ? `<p><span>Observaciones:</span> <span>${verificacion.observaciones}</span></p>` : ''}
-        </div>
-        <h4>Checklist de Verificación</h4>
-        <div class="verificacion-detalle-items">
-            ${verificacion.items.map(item => `
-                <div class="verificacion-detalle-item">
-                    <span class="${item.verificado ? 'verificacion-detalle-item-check' : 'verificacion-detalle-item-uncheck'}">
-                        ${item.verificado ? '✓' : '✗'}
-                    </span>
-                    <span>${item.texto}</span>
-                </div>
-            `).join('')}
-        </div>
-    `;
-    
-    // Mostrar modal
-    modal.classList.add('active');
-    
-    // Configurar botón de cerrar
-    const btnCerrar = modal.querySelector('.verificacion-detalle-close');
-    btnCerrar.addEventListener('click', function() {
-        modal.classList.remove('active');
-    });
-    
-    // Cerrar al hacer clic fuera del contenido
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            modal.classList.remove('active');
-        }
-    });
-}
-
-/**
- * Exporta las verificaciones a un archivo CSV
+ * Exporta las verificaciones actuales a un archivo CSV
  */
 function exportarVerificacionesCSV() {
     console.log('Exportando verificaciones a CSV...');
     
-    // Obtener verificaciones a exportar (aplicar filtros si están activos)
-    const filtroEquipo = document.getElementById("filtro-equipo-historial").value;
-    const filtroResultado = document.getElementById("filtro-resultado-historial").value;
-    const filtroFechaDesde = document.getElementById("filtro-fecha-desde").value;
-    const filtroFechaHasta = document.getElementById("filtro-fecha-hasta").value;
-    
-    let verificacionesExportar = verificaciones;
-    
-    // Si hay filtros aplicados, filtrar las verificaciones
-    if (filtroEquipo || filtroResultado || filtroFechaDesde || filtroFechaHasta) {
-        const fechaDesdeTimestamp = filtroFechaDesde ? new Date(filtroFechaDesde).getTime() : 0;
-        const fechaHastaTimestamp = filtroFechaHasta ? new Date(filtroFechaHasta + 'T23:59:59').getTime() : Infinity;
-        
-        verificacionesExportar = verificaciones.filter(verificacion => {
-            const fechaVerificacion = new Date(verificacion.fecha).getTime();
-            
-            // Filtro por equipo
-            if (filtroEquipo && verificacion.equipoId !== filtroEquipo) {
-                return false;
-            }
-            
-            // Filtro por resultado
-            if (filtroResultado && verificacion.resultado !== filtroResultado) {
-                return false;
-            }
-            
-            // Filtro por fecha
-            if (fechaVerificacion < fechaDesdeTimestamp || fechaVerificacion > fechaHastaTimestamp) {
-                return false;
-            }
-            
-            return true;
-        });
-    }
-    
-    // Si no hay verificaciones, mostrar mensaje
-    if (verificacionesExportar.length === 0) {
-        mostrarMensaje("No hay verificaciones para exportar", "warning");
+    // Obtener los datos de la tabla (puede mejorarse para incluir todos los datos)
+    const rows = [];
+    const tabla = document.querySelector("#tabla-verificaciones");
+    if (!tabla) {
+        mostrarMensaje("No se encontró la tabla de verificaciones", "error");
         return;
     }
     
-    // Formatear resultados para el CSV
-    const resultadosTexto = {
-        'conforme': 'Conforme',
-        'observaciones': 'Con observaciones',
-        'no-conforme': 'No conforme'
-    };
+    // Obtener encabezados
+    const encabezados = Array.from(tabla.querySelectorAll("thead th"));
+    const encabezadosTexto = encabezados.map(th => th.innerText.trim());
+    rows.push(encabezadosTexto);
     
-    // Encabezados del CSV
-    let csv = 'Fecha,Equipo,Serie,Ubicación,Responsable,Resultado,Observaciones\n';
-    
-    // Añadir cada verificación
-    verificacionesExportar.forEach(v => {
-        const fecha = new Date(v.fecha).toLocaleString();
-        const resultado = resultadosTexto[v.resultado] || v.resultado;
-        
-        // Escapar campos de texto para CSV
-        const observaciones = v.observaciones ? `"${v.observaciones.replace(/"/g, '""')}"` : '';
-        const nombreEquipo = `"${v.nombreEquipo.replace(/"/g, '""')}"`;
-        const ubicacion = `"${v.ubicacionEquipo.replace(/"/g, '""')}"`;
-        const responsable = `"${v.responsable.replace(/"/g, '""')}"`;
-        
-        csv += `${fecha},${nombreEquipo},${v.equipoId},${ubicacion},${responsable},${resultado},${observaciones}\n`;
+    // Obtener filas
+    const filas = tabla.querySelectorAll("tbody tr");
+    filas.forEach(tr => {
+        const cols = tr.querySelectorAll("td");
+        const filaTexto = Array.from(cols).map(td => td.innerText.trim());
+        rows.push(filaTexto);
     });
     
-    // Crear blob y descargar
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
+    // Convertir a CSV
+    const csvContent = "data:text/csv;charset=utf-8," 
+        + rows.map(e => e.join(",")).join("\n");
     
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', `verificaciones_${new Date().toISOString().slice(0,10)}.csv`);
-    link.style.display = 'none';
-    
+    // Descargar archivo
+    const link = document.createElement("a");
+    link.setAttribute("href", encodeURI(csvContent));
+    link.setAttribute("download", `verificaciones_${new Date().toISOString().slice(0,10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     
-    mostrarMensaje(`Se exportaron ${verificacionesExportar.length} verificaciones a CSV`, "success");
+    mostrarMensaje("Verificaciones exportadas a CSV", "success");
 }
 
-// ===== UTILIDADES =====
+/**
+ * Limpia los filtros del historial y restaura la vista completa
+ */
+function limpiarFiltrosHistorial() {
+    console.log('Limpiando filtros del historial...');
+    
+    // Resetear los valores de los filtros
+    const fechaDesdeInput = document.getElementById("fecha-desde");
+    const fechaHastaInput = document.getElementById("fecha-hasta");
+    const equipoFiltro = document.getElementById("filtro-equipo");
+    const resultadoFiltro = document.getElementById("filtro-resultado");
+    
+    // Limpiar los campos de filtro
+    if (fechaDesdeInput) fechaDesdeInput.value = '';
+    if (fechaHastaInput) fechaHastaInput.value = '';
+    if (equipoFiltro) equipoFiltro.selectedIndex = 0;
+    if (resultadoFiltro) resultadoFiltro.selectedIndex = 0;
+    
+    // Actualizar la tabla con todas las verificaciones
+    actualizarTablaVerificaciones();
+    
+    mostrarMensaje("Filtros eliminados. Mostrando todas las verificaciones.", "info");
+}
+
+// ===== FUNCIONES UTILITARIAS =====
 
 /**
- * Muestra un mensaje al usuario
- * Reutiliza la función mostrarMensaje del script principal si existe
+ * Muestra un mensaje en la interfaz (puede ser un toast, alerta, etc.)
+ * @param {string} mensaje - El mensaje a mostrar
+ * @param {string} tipo - Tipo de mensaje ('success', 'error', 'info', 'warning')
  */
-function mostrarMensaje(mensaje, tipo = 'info') {
-    // Si existe la función global mostrarMensaje, usarla
-    if (typeof window.mostrarMensaje === 'function') {
-        window.mostrarMensaje(mensaje, tipo);
+function mostrarMensaje(mensaje, tipo) {
+    console.log(`[${tipo.toUpperCase()}] ${mensaje}`);
+    
+    // Aquí se puede implementar una mejor interfaz de mensajes
+    alert(mensaje);
+}
+
+/**
+ * Formatea el nombre de una categoría para mostrarla
+ */
+function formatearCategoria(categoria) {
+    const categorias = {
+        'alta-tecnologia': 'Alta Tecnología',
+        'soporte-vida': 'Soporte de Vida',
+        'critico': 'Equipo Crítico',
+        'general': 'Equipamiento General'
+    };
+    
+    return categorias[categoria] || categoria;
+}
+
+/**
+ * Elimina una verificación específica
+ * @param {string} verificacionId - ID de la verificación a eliminar
+ */
+function eliminarVerificacion(verificacionId) {
+    console.log(`Eliminando verificación: ${verificacionId}`);
+    
+    // Confirmar antes de eliminar
+    if (!confirm("¿Estás seguro de que deseas eliminar esta verificación? Esta acción no se puede deshacer.")) {
         return;
     }
     
-    // Si no existe, crear nuestra propia implementación básica
-    console.log(`[${tipo.toUpperCase()}] ${mensaje}`);
-    alert(`${mensaje}`);
-}
-
-// ===== INICIALIZACIÓN DEL MÓDULO =====
-
-// Inicializar el módulo cuando el DOM esté cargado
-document.addEventListener('DOMContentLoaded', function() {
-    // Verificar si los equipos ya están cargados
-    if (typeof equipos !== 'undefined' && Array.isArray(equipos)) {
-        inicializarModuloVerificacion();
+    // Buscar y eliminar la verificación
+    const index = verificaciones.findIndex(v => v.id === verificacionId);
+    if (index !== -1) {
+        // Guardar información para el mensaje
+        const equipo = verificaciones[index].nombreEquipo;
+        const fecha = new Date(verificaciones[index].fecha).toLocaleString();
+        
+        // Eliminar la verificación
+        verificaciones.splice(index, 1);
+        
+        // Guardar cambios en localStorage
+        try {
+            localStorage.setItem('verificacionesEquipos', JSON.stringify(verificaciones));
+        } catch (error) {
+            console.error('Error al guardar en localStorage:', error);
+        }
+        
+        // Actualizar la tabla
+        actualizarTablaVerificaciones();
+        
+        mostrarMensaje(`Verificación de ${equipo} del ${fecha} eliminada correctamente`, "success");
     } else {
-        // Si los equipos no están cargados, esperar a que lo estén
-        console.log('Esperando a que se carguen los equipos...');
-        
-        // Verificar cada 500ms si los equipos ya están cargados
-        const interval = setInterval(function() {
-            if (typeof equipos !== 'undefined' && Array.isArray(equipos)) {
-                clearInterval(interval);
-                console.log('Equipos detectados, inicializando módulo de verificación...');
-                inicializarModuloVerificacion();
-            }
-        }, 500);
-        
-        // Timeout de seguridad después de 10 segundos
-        setTimeout(function() {
-            clearInterval(interval);
-            console.error('Timeout al esperar los equipos. Inicializando módulo de verificación sin equipos...');
-            inicializarModuloVerificacion();
-        }, 10000);
+        mostrarMensaje("No se encontró la verificación para eliminar", "error");
     }
-});
+}
